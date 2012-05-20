@@ -3,23 +3,16 @@ using System.Collections;
 
 public class ObjectOfInterest : MonoBehaviour
 {
-	float life = 2;
+	int nibblesRemaining = 2;
 	
 	public void Eat()
 	{
-		life--;
-		if (life == 0)
+		if (--nibblesRemaining == 0)
 			Destroy(gameObject);
 	}
 	
-	bool IsAlive
+	public int NibblesRemaining
 	{
-		get
-		{
-			if (life > 0)
-				return true;
-			else
-				return false;
-		}
+		set { nibblesRemaining = value; }
 	}
 }

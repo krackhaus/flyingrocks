@@ -16,6 +16,7 @@ public class Badger : MonoBehaviour
 	void Awake()
 	{
 		Hungry = Foraging = Eating = ReachedTarget = true;
+		rigidbody.useGravity = false;
 	}
 	
 	void Start()
@@ -64,7 +65,7 @@ public class Badger : MonoBehaviour
 		 */
 		while (!ReachedTarget && hungerLevel < 150)
 		{
-			hungerLevel++;
+			hungerLevel += 0.1f;
 			if (hungerLevel < 100)
 				transform.Translate(Vector3.forward);
 			else
@@ -83,11 +84,13 @@ public class Badger : MonoBehaviour
 		{
 			ooi.Eat();
 			hungerLevel--;
-			Debug.Log ("eating, hunger level = " +hungerLevel);
 			if (hungerLevel == 0)
 				Hungry = false;
+			Debug.Log ("eating, hunger level = " +hungerLevel);
 			yield return new WaitForSeconds(eatingUpdateRate);
 		}
+		if (Hungry)
+			Forage();
 	}
 	
 	/*
@@ -97,13 +100,31 @@ public class Badger : MonoBehaviour
 	void FindClosestObjectOfInterest()
 	{
 		float lastDistance = Mathf.Infinity;
+		bool cleanList = false;
 		foreach (ObjectOfInterest ooi in objectsOfInterest)
 		{
+			if (ooi == null)
+			{
+				cleanList = true;
+				continue;
+			}
 			float distance = Vector3.Distance(transform.position, ooi.transform.position);
 			if (distance < lastDistance)
 				target = ooi.transform;
 		}
 		ReachedTarget = false;
+		
+		if (cleanList)
+			CleanObjectsOfInterestList();
+	}
+	
+	void CleanObjectsOfInterestList()
+	{
+		for (int i = 0; i < objectsOfInterest.Count; i++)
+		{
+			if (objectsOfInterest[i] == null)
+				objectsOfInterest.RemoveAt(i);
+		}
 	}
 	#endregion
 	#region Getters and Setters
