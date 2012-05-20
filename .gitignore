@@ -2,6 +2,7 @@
 bin
 obj
 Temp/*
+flyingrocks.userprefs
 
 # mstest test results
 TestResults
