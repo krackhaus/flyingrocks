@@ -78,14 +78,16 @@ public class Badger : MonoBehaviour
 	
 	IEnumerator Eat()
 	{
-		while (Hungry)
+		ObjectOfInterest ooi = target.gameObject.GetComponent<ObjectOfInterest>();
+		while (Hungry && ooi)
 		{
-			target.gameObject.GetComponent<ObjectOfInterest>().Eat();
+			ooi.Eat();
 			hungerLevel--;
 			Debug.Log ("eating, hunger level = " +hungerLevel);
+			if (hungerLevel == 0)
+				Hungry = false;
 			yield return new WaitForSeconds(eatingUpdateRate);
 		}
-		Hungry = false;
 	}
 	
 	/*

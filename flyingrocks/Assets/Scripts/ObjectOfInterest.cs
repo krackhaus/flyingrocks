@@ -3,11 +3,13 @@ using System.Collections;
 
 public class ObjectOfInterest : MonoBehaviour
 {
-	float life = 100;
+	float life = 2;
 	
 	public void Eat()
 	{
 		life--;
+		if (life == 0)
+			Destroy(gameObject);
 	}
 	
 	bool IsAlive
