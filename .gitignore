@@ -1,9 +1,24 @@
-# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
-bin
-obj
-flyingrocks/Temp/
+# Unity3D .gitignore file.
+# #     Store this file at the root of your local repository.
+flyingrocks/.DS_Store
 flyingrocks/Library/
-flyingrocks/flyingrocks.userprefs
+flyingrocks/Library/AssetImportState
+flyingrocks/Library/AssetServerCacheV3
+flyingrocks/Library/FailedAssetImports.txt
+flyingrocks/Library/ScriptAssemblies
+flyingrocks/Library/ScriptMapper
+flyingrocks/Library/assetDatabase3
+flyingrocks/Library/cache
+flyingrocks/Library/expandedItems
+flyingrocks/Library/metadata
+flyingrocks/Library/previews
+flyingrocks/Library/guidmapper
+flyingrocks/Temp
+flyingrocks/*.csproj
+flyingrocks/*.pidb
+flyingrocks/*.sln
+flyingrocks/build
+# flyingrocks/flyingrocks.userprefs
 
 # mstest test results
 TestResults

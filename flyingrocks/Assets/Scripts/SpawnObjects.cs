@@ -13,27 +13,15 @@ public class SpawnObjects : MonoBehaviour
 	
 	void Start()
 	{
-		CreateObjectsOfInterest(numberOfObjectsOfInterestToCreate);
-		CreateEnemies(numberOfEnemiesToCreate);
+		SpawnObjectsAcrossGrid(numberOfObjectsOfInterestToCreate, objectOfInterest);
+		SpawnObjectsAcrossGrid(numberOfEnemiesToCreate, enemy);
 	}
 	
-	void CreateObjectsOfInterest(int quantity)
+	void SpawnObjectsAcrossGrid(int quantity, GameObject g)
 	{
 		for (int i = 0; i < quantity; i++)
 		{
-			GameObject go = Instantiate(objectOfInterest, new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2)), Quaternion.identity) as GameObject;
-			go.transform.parent = transform;
-			Vector3 goPos = go.transform.position;
-			goPos.y = go.transform.lossyScale.y/2;
-			go.transform.position = goPos;
-		}
-	}
-	
-	void CreateEnemies(int quantity)
-	{
-		for (int i = 0; i < quantity; i++)
-		{
-			GameObject go = Instantiate(enemy, new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2)), Quaternion.identity) as GameObject;
+			GameObject go = Instantiate(g, new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2)), Quaternion.identity) as GameObject;
 			go.transform.parent = transform;
 			Vector3 goPos = go.transform.position;
 			goPos.y = go.transform.lossyScale.y/2;
