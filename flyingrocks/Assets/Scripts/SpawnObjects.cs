@@ -11,7 +11,7 @@ public class SpawnObjects : MonoBehaviour
 	public GameObject objectOfInterest;
 	public GameObject enemy;
 	
-	void Start()
+	public void Bootstrap()
 	{
 		SpawnObjectsAcrossGrid(numberOfObjectsOfInterestToCreate, objectOfInterest);
 		SpawnObjectsAcrossGrid(numberOfEnemiesToCreate, enemy);
