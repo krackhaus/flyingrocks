@@ -17,6 +17,7 @@ public class Badger : MonoBehaviour
 	#region Overhead
 	void Awake()
 	{
+		transform.parent = GameObject.Find("Generated Enemies").transform;
 		renderer.material.color = Color.red;
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
@@ -60,7 +61,7 @@ public class Badger : MonoBehaviour
 	#region Behaviour
 	void Forage()
 	{
-		FindClosestObjectOfInterest();
+		FindClosestFood();
 		if (target != null)
 		{
 			Foraging = true;
@@ -129,18 +130,18 @@ public class Badger : MonoBehaviour
 		 * - The Object of Interest is Destroyed
 		 * - (planned) Remains unperterbed
 		 */
-		ObjectOfInterest ooi = null;
+		Food food = null;
 		try
 		{
-			ooi = target.gameObject.GetComponent<ObjectOfInterest>();
+			food = target.gameObject.GetComponent<Food>();
 		}
 		catch
 		{
-			FindClosestObjectOfInterest();
+			FindClosestFood();
 		}
-		while (Hungry && ooi)
+		while (Hungry && food)
 		{
-			ooi.Eat();
+			food.Eat();
 			hungerLevel--;
 			if (hungerLevel == 0)
 				Hungry = false;
@@ -156,7 +157,7 @@ public class Badger : MonoBehaviour
 	 * Discover closest Object of Interest and set it as our target
 	 * so we can look at and move toward it.
 	 */
-	void FindClosestObjectOfInterest()
+	void FindClosestFood()
 	{
 		float lastDistance = Mathf.Infinity;
 		CleanObjectsOfInterestList();
@@ -164,7 +165,7 @@ public class Badger : MonoBehaviour
 		{
 			foreach (ObjectOfInterest ooi in objectsOfInterest)
 			{
-				if (ooi)
+				if (ooi.GetType().Equals(typeof(Food)))
 				{
 					float distance = Vector3.Distance(transform.position, ooi.transform.position);
 					if (distance < lastDistance)
@@ -179,7 +180,7 @@ public class Badger : MonoBehaviour
 		}
 		catch
 		{
-			FindClosestObjectOfInterest();
+			FindClosestFood();
 		}
 		ReachedTarget = false;
 	}

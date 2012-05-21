@@ -35,10 +35,11 @@ public class CameraController : MonoBehaviour
 	{
 		if (setFocalPoint)
 			FindFocalPoint();
+		Vector3 fpos = focalPoint.transform.position;
 		transform.rotation = Quaternion.Slerp(transform.rotation, focalPoint.transform.rotation, Time.deltaTime);
-		transform.LookAt(focalPoint.transform);
-		if (Vector3.Distance(transform.position, focalPoint.transform.position) <= desiredDistance) return;
-		transform.position = Vector3.Lerp(transform.position, (focalPoint.transform.position + offsetVector), Time.deltaTime / speedDamping);
+		transform.LookAt(fpos);
+		if (Vector3.Distance(transform.position, fpos) > desiredDistance)
+			transform.position = Vector3.Lerp(transform.position, (fpos + offsetVector), Time.deltaTime / speedDamping);
 	}
 	
 	void FindFocalPoint()

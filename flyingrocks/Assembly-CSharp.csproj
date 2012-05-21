@@ -47,6 +47,7 @@
      <Compile Include="Assets\Scripts\Badger.cs" />
      <Compile Include="Assets\Scripts\Bootstrap.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
+     <Compile Include="Assets\Scripts\Food.cs" />
      <Compile Include="Assets\Scripts\ObjectOfInterest.cs" />
      <Compile Include="Assets\Scripts\SpawnObjects.cs" />
   </ItemGroup>
