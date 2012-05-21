@@ -1,6 +1,7 @@
 # Unity3D .gitignore file.
 # #     Store this file at the root of your local repository.
 flyingrocks/.DS_Store
+flyingrocks/Library/
 flyingrocks/Library/AssetImportState
 flyingrocks/Library/AssetServerCacheV3
 flyingrocks/Library/FailedAssetImports.txt
@@ -17,6 +18,7 @@ flyingrocks/*.csproj
 flyingrocks/*.pidb
 flyingrocks/*.sln
 flyingrocks/build
+# flyingrocks/flyingrocks.userprefs
 
 # mstest test results
 TestResults
