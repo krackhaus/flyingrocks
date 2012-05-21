@@ -10,19 +10,25 @@ public class Badger : MonoBehaviour
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
 	List<Collider> senses = new List<Collider>(5);
-	bool[] flags = new bool[4];
+	bool[] flags = new bool[6];
 	float hungerLevel = 50;
 	Transform target;
 	
 	#region Overhead
 	void Awake()
 	{
+		renderer.material.color = Color.red;
+		rigidbody.freezeRotation = true;
+		rigidbody.useGravity = false;
+		
 		// Setup Senses so we can detect and react to things in the environment
 		senses.Insert(0, transform.FindChild("HearingRange").GetComponent<SphereCollider>());
 		((SphereCollider)senses[0]).radius += hearingRange;
 		
-		Hungry = Foraging = Eating = ReachedTarget = true;
-		rigidbody.useGravity = false;
+		// Initialize Flags
+		Hungry = ReachedTarget = true;
+		Active = Tired = Eating = Foraging = false;
+		
 	}
 	
 	void Start()
@@ -35,32 +41,44 @@ public class Badger : MonoBehaviour
 				objectsOfInterest.Add(c as ObjectOfInterest);
 		}
 		
-		//Bootstrap code
-		SetColors();
-		Forage();
-	}
-	
-	void SetColors()
-	{
-		// let's set the material color to red for now, so that we know it's an baddie.
-		renderer.material.color = Color.red;
+		//bootstrap
+		MakeDecision();
 	}
 	
 	void OnTriggerEnter(Collider trigger)
 	{
-		Debug.Log ("collision with " + trigger.name);
 		if (trigger.transform.Equals(target))
 			ReachedTarget = true;
+	}
+	
+	void OnTriggerExit(Collider trigger)
+	{
+		if (trigger.transform.Equals(target))
+			StartCoroutine(MoveTowardTarget());
 	}
 	#endregion
 	#region Behaviour
 	void Forage()
 	{
-		if (target == null)
-			FindClosestObjectOfInterest();
-		
-		Foraging = true;
+		FindClosestObjectOfInterest();
+		if (target != null)
+		{
+			Foraging = true;
+			StartCoroutine(MoveTowardTarget());
+		}
+	}
+	
+	void Roam()
+	{
+		Roaming = true;
+		target = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid();
 		StartCoroutine(MoveTowardTarget());
+	}
+	
+	void Sleep()
+	{
+		Active = false;
+		//...
 	}
 	
 	IEnumerator MoveTowardTarget()
@@ -79,33 +97,61 @@ public class Badger : MonoBehaviour
 				transform.Translate(Vector3.forward/2);
 			yield return new WaitForSeconds(movementUpdateRate);
 		}
-		Foraging = false;
+		Active = false;
+		MakeDecision();
+	}
+	
+	/*
+	 * VERY simple desicion making...more to come later.
+	 */
+	void MakeDecision()
+	{
+		StopAllCoroutines();
 		if (Hungry)
-			StartCoroutine(Eat());
+		{
+			if (ReachedTarget)
+				StartCoroutine(Eat());
+			else
+				Forage();
+		}
+		else if (!Tired)
+			Roam();
+		else
+			Sleep();
 	}
 	
 	IEnumerator Eat()
 	{
+		Eating = true;
 		/*
 		 * Badger will continue to eat until either;
 		 * - No longer hungry
 		 * - The Object of Interest persists
 		 * - (planned) Remains unperterbed
 		 */
-		ObjectOfInterest ooi = target.gameObject.GetComponent<ObjectOfInterest>();
+		ObjectOfInterest ooi = null;
+		try
+		{
+			ooi = target.gameObject.GetComponent<ObjectOfInterest>();
+		}
+		catch
+		{
+			FindClosestObjectOfInterest();
+		}
 		while (Hungry && ooi)
 		{
 			ooi.Eat();
 			hungerLevel--;
 			if (hungerLevel == 0)
 				Hungry = false;
-			Debug.Log ("nomnomnom -- hunger level = " +hungerLevel);
+			Debug.Log (name +": nomnoms -- hunger level = "+ hungerLevel);
 			yield return new WaitForSeconds(eatingUpdateRate);
 		}
-		if (Hungry)
-			Forage();
+		Eating = false;
+		MakeDecision();
 	}
-	
+	#endregion
+	#region Helpers
 	/*
 	 * Discover closest Object of Interest and set it as our target
 	 * so we can look at and move toward it.
@@ -114,14 +160,26 @@ public class Badger : MonoBehaviour
 	{
 		float lastDistance = Mathf.Infinity;
 		CleanObjectsOfInterestList();
-		foreach (ObjectOfInterest ooi in objectsOfInterest)
+		try
 		{
-			float distance = Vector3.Distance(transform.position, ooi.transform.position);
-			if (distance < lastDistance)
+			foreach (ObjectOfInterest ooi in objectsOfInterest)
 			{
-				lastDistance = distance;
-				target = ooi.transform;
+				if (ooi)
+				{
+					float distance = Vector3.Distance(transform.position, ooi.transform.position);
+					if (distance < lastDistance)
+					{
+						lastDistance = distance;
+						target = ooi.transform;
+					}
+				}
+				else
+					objectsOfInterest.Remove(ooi);
 			}
+		}
+		catch
+		{
+			FindClosestObjectOfInterest();
 		}
 		ReachedTarget = false;
 	}
@@ -154,10 +212,28 @@ public class Badger : MonoBehaviour
 		set { flags[2] = value; }
 	}
 	
-	public bool ReachedTarget
+	public bool Roaming
 	{
 		get { return flags[3]; }
 		set { flags[3] = value; }
+	}
+	
+	public bool Active
+	{
+		get { return Roaming & Foraging; }
+		set { Roaming = Foraging = value; }
+	}
+	
+	public bool ReachedTarget
+	{
+		get { return flags[4]; }
+		set { flags[4] = value; }
+	}
+	
+	public bool Tired
+	{
+		get { return flags[5]; }
+		set { flags[5] = value; }
 	}
 	
 	bool Hearing
