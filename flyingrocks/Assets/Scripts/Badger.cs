@@ -89,7 +89,7 @@ public class Badger : MonoBehaviour
 		/*
 		 * Badger will continue to eat until either;
 		 * - No longer hungry
-		 * - The Object of Interest persists
+		 * - The Object of Interest is Destroyed
 		 * - (planned) Remains unperterbed
 		 */
 		ObjectOfInterest ooi = target.gameObject.GetComponent<ObjectOfInterest>();
