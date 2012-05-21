@@ -3,16 +3,23 @@ using System.Collections;
 
 public class ObjectOfInterest : MonoBehaviour
 {
-	int nibblesRemaining = 2;
+	public enum Density { Low = 2, Medium = 5, High = 10 };
+	public enum Type { Food, Other };
+	public Type type;
+	public Density density;
+	
+	void Awake()
+	{
+		if (type == Type.Food)
+		{
+			name = "nom";
+			renderer.material.color = Color.green;
+		}
+	}
 	
 	public void Eat()
 	{
-		if (--nibblesRemaining == 0)
+		if (--density == 0)
 			Destroy(gameObject);
-	}
-	
-	public int NibblesRemaining
-	{
-		set { nibblesRemaining = value; }
 	}
 }

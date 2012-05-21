@@ -6,8 +6,10 @@ public class Badger : MonoBehaviour
 {
 	public float movementUpdateRate = 1;
 	public float eatingUpdateRate = 5;
+	public float hearingRange = 5;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
+	List<Collider> senses = new List<Collider>(5);
 	bool[] flags = new bool[4];
 	float hungerLevel = 50;
 	Transform target;
@@ -15,6 +17,10 @@ public class Badger : MonoBehaviour
 	#region Overhead
 	void Awake()
 	{
+		// Setup Senses so we can detect and react to things in the environment
+		senses.Insert(0, transform.FindChild("HearingRange").GetComponent<SphereCollider>());
+		((SphereCollider)senses[0]).radius += hearingRange;
+		
 		Hungry = Foraging = Eating = ReachedTarget = true;
 		rigidbody.useGravity = false;
 	}
@@ -36,6 +42,7 @@ public class Badger : MonoBehaviour
 	
 	void SetColors()
 	{
+		// let's set the material color to red for now, so that we know it's an baddie.
 		renderer.material.color = Color.red;
 	}
 	
@@ -52,7 +59,6 @@ public class Badger : MonoBehaviour
 		if (target == null)
 			FindClosestObjectOfInterest();
 		
-		transform.LookAt(target);
 		Foraging = true;
 		StartCoroutine(MoveTowardTarget());
 	}
@@ -66,6 +72,7 @@ public class Badger : MonoBehaviour
 		while (!ReachedTarget && hungerLevel < 150)
 		{
 			hungerLevel += 0.1f;
+			transform.LookAt(target);
 			if (hungerLevel < 100)
 				transform.Translate(Vector3.forward);
 			else
@@ -79,6 +86,12 @@ public class Badger : MonoBehaviour
 	
 	IEnumerator Eat()
 	{
+		/*
+		 * Badger will continue to eat until either;
+		 * - No longer hungry
+		 * - The Object of Interest persists
+		 * - (planned) Remains unperterbed
+		 */
 		ObjectOfInterest ooi = target.gameObject.GetComponent<ObjectOfInterest>();
 		while (Hungry && ooi)
 		{
@@ -86,7 +99,7 @@ public class Badger : MonoBehaviour
 			hungerLevel--;
 			if (hungerLevel == 0)
 				Hungry = false;
-			Debug.Log ("eating, hunger level = " +hungerLevel);
+			Debug.Log ("nomnomnom -- hunger level = " +hungerLevel);
 			yield return new WaitForSeconds(eatingUpdateRate);
 		}
 		if (Hungry)
@@ -100,22 +113,17 @@ public class Badger : MonoBehaviour
 	void FindClosestObjectOfInterest()
 	{
 		float lastDistance = Mathf.Infinity;
-		bool cleanList = false;
+		CleanObjectsOfInterestList();
 		foreach (ObjectOfInterest ooi in objectsOfInterest)
 		{
-			if (ooi == null)
-			{
-				cleanList = true;
-				continue;
-			}
 			float distance = Vector3.Distance(transform.position, ooi.transform.position);
 			if (distance < lastDistance)
+			{
+				lastDistance = distance;
 				target = ooi.transform;
+			}
 		}
 		ReachedTarget = false;
-		
-		if (cleanList)
-			CleanObjectsOfInterestList();
 	}
 	
 	void CleanObjectsOfInterestList()
@@ -150,6 +158,11 @@ public class Badger : MonoBehaviour
 	{
 		get { return flags[3]; }
 		set { flags[3] = value; }
+	}
+	
+	bool Hearing
+	{
+		get { return senses[0]; }
 	}
 	#endregion
 }
