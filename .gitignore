@@ -1,5 +1,6 @@
 # Unity3D .gitignore file.
-# #     Store this file at the root of your local repository.
+
+# Folders
 flyingrocks/.DS_Store
 flyingrocks/Library/
 flyingrocks/Library/AssetImportState
@@ -14,10 +15,9 @@ flyingrocks/Library/metadata
 flyingrocks/Library/previews
 flyingrocks/Library/guidmapper
 flyingrocks/Temp
-flyingrocks/*.csproj
-flyingrocks/*.pidb
-flyingrocks/*.sln
 flyingrocks/build
+
+# Filetypes
 flyingrocks/flyingrocks.userprefs
 flyingrocks/*.csproj
 flyingrocks/*.pidb
