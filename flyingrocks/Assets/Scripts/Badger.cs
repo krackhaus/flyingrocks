@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Badger : MonoBehaviour
 {
+	public float decisionTimer = 3;
 	public float movementUpdateRate = 1;
 	public float eatingUpdateRate = 5;
 	public float hearingRange = 5;
@@ -12,7 +13,7 @@ public class Badger : MonoBehaviour
 	List<Collider> senses = new List<Collider>(5);
 	bool[] flags = new bool[6];
 	float hungerLevel = 50;
-	Transform target;
+	Transform ooiTarget, roamTarget = null;
 	
 	#region Overhead
 	void Awake()
@@ -27,8 +28,8 @@ public class Badger : MonoBehaviour
 		((SphereCollider)senses[0]).radius += hearingRange;
 		
 		// Initialize Flags
-		Hungry = ReachedTarget = true;
-		Active = Tired = Eating = Foraging = false;
+		Hungry = true;
+		Active = Tired = Eating = Foraging = KnowsWhereFoodIs = false;
 		
 	}
 	
@@ -46,94 +47,66 @@ public class Badger : MonoBehaviour
 		MakeDecision();
 	}
 	
-	void OnTriggerEnter(Collider trigger)
-	{
-		if (trigger.transform.Equals(target))
-			ReachedTarget = true;
-	}
-	
 	void OnTriggerExit(Collider trigger)
 	{
-		if (trigger.transform.Equals(target))
-			StartCoroutine(MoveTowardTarget());
+		if (trigger.transform.Equals(Target))
+			StartCoroutine(MoveTowardTarget(false));
 	}
 	#endregion
 	#region Behaviour
-	void Forage()
+	IEnumerator Forage()
 	{
-		FindClosestFood();
-		if (target != null)
-		{
-			Foraging = true;
-			StartCoroutine(MoveTowardTarget());
-		}
+		Debug.Log (name +": foraging");
+		yield return StartCoroutine(MoveTowardTarget(false));
+		StartCoroutine(Eat());
 	}
 	
-	void Roam()
+	IEnumerator Roam(bool foraging)
 	{
-		Roaming = true;
-		target = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid();
-		StartCoroutine(MoveTowardTarget());
+		Debug.Log (name + (foraging?": looking for food":" looking around"));
+		roamTarget = GetWaypoint();
+		yield return StartCoroutine(MoveTowardTarget(foraging));
+		if (ReachedTarget && foraging)
+			StartCoroutine(Eat());
+		else
+			MakeDecision();
 	}
 	
 	void Sleep()
 	{
-		Active = false;
-		//...
+		Debug.Log (name +": sleeping");
+		Invoke("MakeDecision", decisionTimer * 10);
 	}
 	
-	IEnumerator MoveTowardTarget()
+	IEnumerator MoveTowardTarget(bool foraging)
 	{
-		/*
-		 * Badger will stop moving when he is too hungry,
-		 * or when he has reached the target.
-		 */
-		while (!ReachedTarget && hungerLevel < 150)
+		while (Target && !ReachedTarget && hungerLevel < 150)
 		{
 			hungerLevel += 0.1f;
-			transform.LookAt(target);
+			transform.LookAt(Target);
+			if (foraging)
+			{
+				if(FindClosestFood())
+				{
+					StopCoroutine("MoveTowardTarget");
+					Forage();
+				}
+			}
 			if (hungerLevel < 100)
 				transform.Translate(Vector3.forward);
 			else
 				transform.Translate(Vector3.forward/2);
 			yield return new WaitForSeconds(movementUpdateRate);
 		}
-		Active = false;
-		MakeDecision();
-	}
-	
-	/*
-	 * VERY simple desicion making...more to come later.
-	 */
-	void MakeDecision()
-	{
-		StopAllCoroutines();
-		if (Hungry)
-		{
-			if (ReachedTarget)
-				StartCoroutine(Eat());
-			else
-				Forage();
-		}
-		else if (!Tired)
-			Roam();
-		else
-			Sleep();
 	}
 	
 	IEnumerator Eat()
 	{
 		Eating = true;
-		/*
-		 * Badger will continue to eat until either;
-		 * - No longer hungry
-		 * - The Object of Interest is Destroyed
-		 * - (planned) Remains unperterbed
-		 */
 		Food food = null;
 		try
 		{
-			food = target.gameObject.GetComponent<Food>();
+			food = ooiTarget.gameObject.GetComponent<Food>();
 		}
 		catch
 		{
@@ -152,13 +125,38 @@ public class Badger : MonoBehaviour
 		MakeDecision();
 	}
 	#endregion
+	#region AI
+	/*
+	 * VERY simple desicion making...more to come later.
+	 */
+	void MakeDecision()
+	{
+		//Debug.Log (name +" making decision");
+		Active = false;
+		if (Hungry && FindClosestFood())
+			StartCoroutine(Forage());
+		else if (!Tired)
+			StartCoroutine(Roam(true));
+		else
+		{
+			if (Random.value > 0.75)
+			{
+				Debug.Log (name +": thinking for "+ decisionTimer +"seconds");
+				Invoke("MakeDecision", decisionTimer);
+			}
+			else
+				Sleep();
+		}
+	}
+	#endregion
 	#region Helpers
 	/*
 	 * Discover closest Object of Interest and set it as our target
 	 * so we can look at and move toward it.
 	 */
-	void FindClosestFood()
+	bool FindClosestFood()
 	{
+		bool returnValue = false;
 		float lastDistance = Mathf.Infinity;
 		CleanObjectsOfInterestList();
 		try
@@ -167,22 +165,32 @@ public class Badger : MonoBehaviour
 			{
 				if (ooi.GetType().Equals(typeof(Food)))
 				{
+					if (!CanSee(ooi.transform)) continue;
 					float distance = Vector3.Distance(transform.position, ooi.transform.position);
 					if (distance < lastDistance)
 					{
 						lastDistance = distance;
-						target = ooi.transform;
+						ooiTarget = ooi.transform;
+						returnValue = true;
 					}
 				}
 				else
 					objectsOfInterest.Remove(ooi);
 			}
+			return KnowsWhereFoodIs = returnValue;
 		}
 		catch
 		{
 			FindClosestFood();
 		}
-		ReachedTarget = false;
+		return KnowsWhereFoodIs = returnValue;
+	}
+	
+	bool CanSee(Transform transformOfInterest)
+	{
+		const float halfFOV = 30f;
+		Vector3 heading = (transformOfInterest.position - transform.position).normalized;
+		return Vector3.Dot(transform.forward, heading) >= Mathf.Cos(Mathf.Deg2Rad * halfFOV);
 	}
 	
 	void CleanObjectsOfInterestList()
@@ -192,6 +200,21 @@ public class Badger : MonoBehaviour
 			if (objectsOfInterest[i] == null)
 				objectsOfInterest.RemoveAt(i);
 		}
+	}
+	
+	Transform GetWaypoint()
+	{
+		if (roamTarget != null)
+		{
+			print (roamTarget +", "+ roamTarget.gameObject.name +", "+ roamTarget.gameObject.tag);
+			Destroy(roamTarget.gameObject);
+		}
+		Transform t = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid();
+		Vector3 tpos = t.position;
+		tpos.y += transform.lossyScale.y/2;
+		t.position = tpos;
+		t.gameObject.tag = "Target";
+		return t;
 	}
 	#endregion
 	#region Getters and Setters
@@ -219,13 +242,7 @@ public class Badger : MonoBehaviour
 		set { flags[3] = value; }
 	}
 	
-	public bool Active
-	{
-		get { return Roaming & Foraging; }
-		set { Roaming = Foraging = value; }
-	}
-	
-	public bool ReachedTarget
+	public bool KnowsWhereFoodIs
 	{
 		get { return flags[4]; }
 		set { flags[4] = value; }
@@ -235,6 +252,52 @@ public class Badger : MonoBehaviour
 	{
 		get { return flags[5]; }
 		set { flags[5] = value; }
+	}
+	
+	public bool Active
+	{
+		get { return Roaming & Foraging; }
+		set
+		{
+			if (!value)
+			{
+				try
+				{
+					Roaming = Foraging = Eating = value;
+					rigidbody.angularVelocity = rigidbody.velocity = Vector3.zero;
+					transform.rotation = Quaternion.identity;
+					StopAllCoroutines();
+				}
+				catch
+				{
+					Debug.LogError ("Could not set Active to false!");
+				}
+			}
+		}
+	}
+	
+	public bool ReachedTarget
+	{
+		get
+		{
+			if (Target && Vector3.Distance(transform.position, Target.transform.position) 
+			<= Mathf.Max(new float[2] { Target.lossyScale.x, Target.lossyScale.y }))
+				return true;
+			return false;
+		}
+	}
+	
+	Transform Target
+	{
+		get
+		{
+			print (name +": "+ ooiTarget +", "+ roamTarget);
+			if (ooiTarget != null)
+				return ooiTarget;
+			if (roamTarget != null)
+				return roamTarget;
+			return null;
+		}
 	}
 	
 	bool Hearing

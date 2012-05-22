@@ -6,10 +6,12 @@ public class Food : ObjectOfInterest
 	public enum Type { BadgerNoms };
 	public Type typeOfFood;
 	
-	void Awake()
+	override protected void Awake()
 	{
+		density = Density.Average;
 		renderer.material.color = Color.green;
 		transform.parent = GameObject.Find("World").transform;
+		base.Awake();
 	}
 	
 	public void Eat()

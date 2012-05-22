@@ -18,7 +18,10 @@ flyingrocks/*.csproj
 flyingrocks/*.pidb
 flyingrocks/*.sln
 flyingrocks/build
-# flyingrocks/flyingrocks.userprefs
+flyingrocks/flyingrocks.userprefs
+flyingrocks/*.csproj
+flyingrocks/*.pidb
+flyingrocks/*.sln
 
 # mstest test results
 TestResults

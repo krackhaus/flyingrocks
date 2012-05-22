@@ -33,7 +33,9 @@ public class SpawnObjects : MonoBehaviour
 	public Transform GetRandomTransformOnGrid()
 	{
 		GameObject go = new GameObject();
+		go.name = ("target");
 		go.transform.position = GetRandomPositionOnGrid();
+		go.transform.parent = GameObject.Find("World").transform;
 		return go.transform;
 	}
 	

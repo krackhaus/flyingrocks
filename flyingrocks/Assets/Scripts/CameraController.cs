@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
 	public float desiredDistance = 30f;
 	public float desiredHeight = 3f;
 	public float speedDamping = 10f;
-	public bool setFocalPoint = false;
+	public bool determineFocalPoint = false;
 	
 	Vector3 offsetVector;
 	
@@ -25,21 +25,25 @@ public class CameraController : MonoBehaviour
 		GameObject[] gos = GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[]; //.FindObjectsOfType<GameObject>();
 		foreach (GameObject go in gos)
 		{
-			if (go.name == "World") continue;
+			if (go.name == "World")
+				continue;
 			objectsInScene.Add(go);
 		}
-		print ("object count = " +objectsInScene.Count);
+		Debug.Log ("Objects of Interest in Scene = " +objectsInScene.Count);
 	}
 	
 	void Update()
 	{
-		if (setFocalPoint)
+		if (determineFocalPoint)
 			FindFocalPoint();
 		Vector3 fpos = focalPoint.transform.position;
-		transform.rotation = Quaternion.Slerp(transform.rotation, focalPoint.transform.rotation, Time.deltaTime);
-		transform.LookAt(fpos);
-		if (Vector3.Distance(transform.position, fpos) > desiredDistance)
-			transform.position = Vector3.Lerp(transform.position, (fpos + offsetVector), Time.deltaTime / speedDamping);
+		if (desiredHeight >= transform.position.y)
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
+		else
+			transform.LookAt(fpos);
+		float distance = Vector3.Distance(transform.position, fpos);
+		if (distance >= desiredDistance)
+			transform.position = Vector3.Lerp(transform.position, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
 	}
 	
 	void FindFocalPoint()
@@ -48,10 +52,7 @@ public class CameraController : MonoBehaviour
 		try
 		{
 			foreach (GameObject go in objectsInScene)
-			{
 				pos += go.transform.position;
-				//print ("tpos = " +go.transform.position);
-			}
 			focalPoint.transform.position /= objectsInScene.Count;
 		}
 		catch
