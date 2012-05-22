@@ -22,7 +22,6 @@ public class SpawnObjects : MonoBehaviour
 		for (int i = 0; i < quantity; i++)
 		{
 			GameObject go = Instantiate(g, GetRandomPositionOnGrid(), Quaternion.identity) as GameObject;
-			//go.transform.parent = transform;
 			Vector3 goPos = go.transform.position;
 			goPos.y = go.transform.lossyScale.y/2;
 			go.transform.position = goPos;

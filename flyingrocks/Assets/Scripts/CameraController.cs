@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 public class CameraController : MonoBehaviour
 {
-	public float desiredDistance = 30f;
+	public float desiredDistance = 32f;
 	public float desiredHeight = 3f;
 	public float speedDamping = 10f;
 	public bool determineFocalPoint = false;
 	
-	Vector3 offsetVector, tpos, fpos;
-	
 	List<GameObject> objectsInScene = new List<GameObject>();
-	GameObject focalPoint;
+	Vector3 offsetVector, tpos, fpos;
+	GameObject camera, focalPoint;
 	
 	void Awake()
 	{
+		camera = GameObject.FindWithTag("MainCamera");
 		focalPoint = GameObject.Find("CameraFocalPoint");
 		offsetVector = new Vector3(0, desiredHeight, 0);
 	}
@@ -37,14 +37,20 @@ public class CameraController : MonoBehaviour
 		if (determineFocalPoint)
 			FindFocalPoint();
 		fpos = focalPoint.transform.position;
-		tpos = transform.position;
+		tpos = camera.transform.position;
 		if (desiredHeight >= tpos.y)
-			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
+			camera.transform.rotation = Quaternion.Slerp(camera.transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
 		else
-			transform.LookAt(fpos);
+			camera.transform.LookAt(fpos);
 		float distance = Vector3.Distance(tpos, fpos);
 		if (distance >= desiredDistance)
-			transform.position = Vector3.Lerp(tpos, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
+			camera.transform.position = Vector3.Lerp(tpos, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
+	}
+	
+	void OnGUI()
+	{
+		GUI.Label(new Rect(32, (Screen.height/4)-20, 200, 20), "tbi");
+		desiredDistance = GUI.VerticalSlider(new Rect(32, Screen.height/4, 20, Screen.height/2), desiredDistance, 18, 64);
 	}
 	
 	void FindFocalPoint()

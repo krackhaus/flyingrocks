@@ -10,7 +10,8 @@ public class Food : ObjectOfInterest
 	{
 		density = Density.Average;
 		renderer.material.color = Color.green;
-		transform.parent = GameObject.Find("World").transform;
+		transform.parent = GameObject.Find("Badger Noms").transform;
+		
 		base.Awake();
 	}
 	

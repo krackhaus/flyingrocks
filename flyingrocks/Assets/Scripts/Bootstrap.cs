@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(NetworkController))]
+[RequireComponent(typeof(CameraController), typeof(SpawnObjects), typeof(NetworkController))]
 public class Bootstrap : MonoBehaviour
 {
 	public bool runInQuickMode = false;
@@ -11,10 +11,21 @@ public class Bootstrap : MonoBehaviour
 	
 	void Start()
 	{
+		// Figure out what we're doing
 		ModeSelect();
-		new GameObject("Generated Enemies");
-		GameObject.Find("World").GetComponent<SpawnObjects>().Bootstrap();
-		GameObject.FindWithTag("MainCamera").GetComponent<CameraController>().Bootstrap();
+		
+		// Put things where they belong
+		GameObject[] gos = new GameObject[2]
+		{
+			new GameObject("Generated Enemies"),
+			new GameObject("Badger Noms")
+		};
+		foreach (GameObject go in gos)
+			go.transform.parent = GameObject.Find("World").transform;
+		
+		// ...and let'er rip!
+		GetComponent<SpawnObjects>().Bootstrap();
+		GetComponent<CameraController>().Bootstrap();
 	}
 	
 	void ModeSelect()
