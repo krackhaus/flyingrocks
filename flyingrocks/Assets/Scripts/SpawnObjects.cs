@@ -36,6 +36,7 @@ public class SpawnObjects : MonoBehaviour
 		go.name = ("target");
 		go.transform.position = GetRandomPositionOnGrid();
 		go.transform.parent = GameObject.Find("World").transform;
+    	go.hideFlags = HideFlags.HideInHierarchy;
 		return go.transform;
 	}
 	
