@@ -18,10 +18,10 @@ flyingrocks/Temp
 flyingrocks/build
 
 # Filetypes
-flyingrocks/flyingrocks.userprefs
-flyingrocks/*.csproj
-flyingrocks/*.pidb
-flyingrocks/*.sln
+*.userprefs
+*.csproj
+*.pidb
+*.sln
 
 # mstest test results
 TestResults
