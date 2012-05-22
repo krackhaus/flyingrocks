@@ -291,7 +291,6 @@ public class Badger : MonoBehaviour
 	{
 		get
 		{
-			print (name +": "+ ooiTarget +", "+ roamTarget);
 			if (ooiTarget != null)
 				return ooiTarget;
 			if (roamTarget != null)

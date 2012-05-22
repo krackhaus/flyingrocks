@@ -9,13 +9,14 @@ public class CameraController : MonoBehaviour
 	public float speedDamping = 10f;
 	public bool determineFocalPoint = false;
 	
-	Vector3 offsetVector;
+	Vector3 offsetVector, tpos, fpos;
 	
 	List<GameObject> objectsInScene = new List<GameObject>();
 	GameObject focalPoint;
 	
 	void Awake()
 	{
+		tpos = transform.position;
 		focalPoint = GameObject.Find("CameraFocalPoint");
 		offsetVector = new Vector3(0, desiredHeight, 0);
 	}
@@ -29,21 +30,21 @@ public class CameraController : MonoBehaviour
 				continue;
 			objectsInScene.Add(go);
 		}
-		Debug.Log ("Objects of Interest in Scene = " +objectsInScene.Count);
+		//Debug.Log ("Objects of Interest in Scene = " +objectsInScene.Count);
 	}
 	
 	void Update()
 	{
 		if (determineFocalPoint)
 			FindFocalPoint();
-		Vector3 fpos = focalPoint.transform.position;
-		if (desiredHeight >= transform.position.y)
+		fpos = focalPoint.transform.position;
+		if (desiredHeight >= tpos.y)
 			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
 		else
 			transform.LookAt(fpos);
-		float distance = Vector3.Distance(transform.position, fpos);
+		float distance = Vector3.Distance(tpos, fpos);
 		if (distance >= desiredDistance)
-			transform.position = Vector3.Lerp(transform.position, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
+			transform.position = Vector3.Lerp(tpos, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
 	}
 	
 	void FindFocalPoint()
