@@ -4,9 +4,7 @@ using System.Collections.Generic;
 
 public class Badger : MonoBehaviour
 {
-	public float decisionTimer = 3;
-	public float movementUpdateRate = 1;
-	public float eatingUpdateRate = 5;
+	public float quickness = 5;
 	public float hearingRange = 5;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
@@ -75,7 +73,7 @@ public class Badger : MonoBehaviour
 	void Sleep()
 	{
 		Debug.Log (name +": sleeping");
-		Invoke("MakeDecision", decisionTimer * 10);
+		Invoke("MakeDecision", (quickness*0.75f) * 10);
 	}
 	
 	IEnumerator MoveTowardTarget(bool foraging)
@@ -96,7 +94,7 @@ public class Badger : MonoBehaviour
 				transform.Translate(Vector3.forward);
 			else
 				transform.Translate(Vector3.forward/2);
-			yield return new WaitForSeconds(movementUpdateRate);
+			yield return new WaitForSeconds((quickness/5));
 		}
 	}
 	
@@ -119,7 +117,7 @@ public class Badger : MonoBehaviour
 			if (hungerLevel == 0)
 				Hungry = false;
 			Debug.Log (name +": nomnoms -- hunger level = "+ hungerLevel);
-			yield return new WaitForSeconds(eatingUpdateRate);
+			yield return new WaitForSeconds(quickness/5);
 		}
 		Eating = false;
 		MakeDecision();
@@ -141,8 +139,8 @@ public class Badger : MonoBehaviour
 		{
 			if (Random.value > 0.75)
 			{
-				Debug.Log (name +": thinking for "+ decisionTimer +"seconds");
-				Invoke("MakeDecision", decisionTimer);
+				Debug.Log (name +": thinking for "+ (quickness*0.75f) +"seconds");
+				Invoke("MakeDecision", (quickness*0.75f));
 			}
 			else
 				Sleep();

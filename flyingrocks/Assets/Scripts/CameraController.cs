@@ -16,7 +16,6 @@ public class CameraController : MonoBehaviour
 	
 	void Awake()
 	{
-		tpos = transform.position;
 		focalPoint = GameObject.Find("CameraFocalPoint");
 		offsetVector = new Vector3(0, desiredHeight, 0);
 	}
@@ -38,6 +37,7 @@ public class CameraController : MonoBehaviour
 		if (determineFocalPoint)
 			FindFocalPoint();
 		fpos = focalPoint.transform.position;
+		tpos = transform.position;
 		if (desiredHeight >= tpos.y)
 			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
 		else
