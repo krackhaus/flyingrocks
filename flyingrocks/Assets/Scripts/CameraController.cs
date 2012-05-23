@@ -11,50 +11,56 @@ public class CameraController : MonoBehaviour
 	
 	List<GameObject> objectsInScene = new List<GameObject>();
 	Vector3 offsetVector, tpos, fpos;
-	GameObject camera, focalPoint;
+	GameObject mainCamera, focalPoint;
 	
 	void Awake()
 	{
-		camera = GameObject.FindWithTag("MainCamera");
+		mainCamera = GameObject.FindWithTag("MainCamera");
 		focalPoint = GameObject.Find("CameraFocalPoint");
 		offsetVector = new Vector3(0, desiredHeight, 0);
 	}
 	
 	public void Bootstrap()
 	{
-		GameObject[] gos = GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[]; //.FindObjectsOfType<GameObject>();
+		GameObject[] gos = GameObject.FindObjectsOfType(typeof (GameObject)) as GameObject[];
 		foreach (GameObject go in gos)
 		{
 			if (go.name == "World")
 				continue;
 			objectsInScene.Add(go);
 		}
-		//Debug.Log ("Objects of Interest in Scene = " +objectsInScene.Count);
+		if (Debug.isDebugBuild)
+		{
+			Debug.Log ("Objects of Interest in Scene = " +objectsInScene.Count);
+		}
 	}
 	
-	void Update()
+	void LateUpdate()
 	{
 		if (determineFocalPoint)
 			FindFocalPoint();
 		fpos = focalPoint.transform.position;
-		tpos = camera.transform.position;
+		tpos = mainCamera.transform.position;
 		if (desiredHeight >= tpos.y)
-			camera.transform.rotation = Quaternion.Slerp(camera.transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
+			mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
 		else
-			camera.transform.LookAt(fpos);
+			mainCamera.transform.LookAt(fpos);
 		float distance = Vector3.Distance(tpos, fpos);
 		if (distance >= desiredDistance)
-			camera.transform.position = Vector3.Lerp(tpos, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
+			mainCamera.transform.position = Vector3.Lerp(tpos, (fpos + offsetVector), (distance/(distance * speedDamping)) * Time.deltaTime);
 	}
 	
+	/*
 	void OnGUI()
 	{
-		GUI.Label(new Rect(32, (Screen.height/4)-20, 200, 20), "tbi");
+		GUI.Label(new Rect(32, (Screen.height/4)-20, 200, 20), "CFD");
 		desiredDistance = GUI.VerticalSlider(new Rect(32, Screen.height/4, 20, Screen.height/2), desiredDistance, 18, 64);
 	}
+	*/
 	
 	void FindFocalPoint()
 	{
+		if (focalPoint.GetType().Equals(typeof(Badger))) return;
 		Vector3 pos = new Vector3(0,0,0);
 		try
 		{
@@ -75,5 +81,10 @@ public class CameraController : MonoBehaviour
 			if (objectsInScene[i] == null)
 				objectsInScene.RemoveAt(i);
 		}
+	}
+	
+	public GameObject FocalPoint
+	{
+		set { focalPoint = value; }
 	}
 }

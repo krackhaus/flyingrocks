@@ -50,6 +50,11 @@ public class Badger : MonoBehaviour
 		if (trigger.transform.Equals(Target))
 			StartCoroutine(MoveTowardTarget(false));
 	}
+	
+	void OnMouseDown()
+	{
+		GameObject.Find("World").GetComponent<CameraController>().FocalPoint = gameObject;
+	}
 	#endregion
 	#region Behaviour
 	IEnumerator Forage()

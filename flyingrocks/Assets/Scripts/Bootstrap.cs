@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Bootstrap.
+/// </summary>
+/// <remarks>
+/// Manual starting of Game Objects which have dependencies.
+/// </remarks>
+
 [RequireComponent(typeof(CameraController), typeof(SpawnObjects), typeof(NetworkController))]
 public class Bootstrap : MonoBehaviour
 {
