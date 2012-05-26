@@ -8,7 +8,8 @@ using System.Collections;
 /// Manual starting of Game Objects which have dependencies.
 /// </remarks>
 
-[RequireComponent(typeof(CameraController), typeof(SpawnObjects), typeof(NetworkController))]
+[RequireComponent(typeof(CameraController), 
+	typeof(SpawnObjects), typeof(NetworkController))]
 public class Bootstrap : MonoBehaviour
 {
 	public bool runInQuickMode = false;
@@ -19,7 +20,7 @@ public class Bootstrap : MonoBehaviour
 	void Start()
 	{
 		// Figure out what we're doing
-		ModeSelect();
+		OptionSelect();
 		
 		// Put things where they belong
 		GameObject[] gos = new GameObject[2]
@@ -35,14 +36,14 @@ public class Bootstrap : MonoBehaviour
 		GetComponent<CameraController>().Bootstrap();
 	}
 	
-	void ModeSelect()
+	void OptionSelect()
 	{
-		if (runInQuickMode)
-			Time.timeScale = 5;
-		else if (runAsServer)
+		if (runAsServer)
 		{
 			networkController = GetComponent<NetworkController>() as NetworkController;
 			networkController.LaunchServer();
 		}
+		else if (runInQuickMode)
+			Time.timeScale = 5;
 	}
 }

@@ -21,7 +21,7 @@ public class SpawnObjects : MonoBehaviour
 	{
 		for (int i = 0; i < quantity; i++)
 		{
-			GameObject go = Instantiate(g, GetRandomPositionOnGrid(), Quaternion.identity) as GameObject;
+			GameObject go = Instantiate(g, GetRandomVectorOnGrid(), Quaternion.identity) as GameObject;
 			Vector3 goPos = go.transform.position;
 			goPos.y = go.transform.lossyScale.y/2;
 			go.transform.position = goPos;
@@ -29,17 +29,27 @@ public class SpawnObjects : MonoBehaviour
 		}
 	}
 	
-	public Transform GetRandomTransformOnGrid()
+	public Transform GetRandomTransformOnGrid(bool hideInHierarchy)
 	{
-		GameObject go = new GameObject();
-		go.name = ("target");
-		go.transform.position = GetRandomPositionOnGrid();
-		go.transform.parent = GameObject.Find("World").transform;
-    	go.hideFlags = HideFlags.HideInHierarchy;
-		return go.transform;
+		//TODO - refactor calling methods to use GetRandomGameObjectOnGrid method (below), and remove this method.
+		
+		
+		// warning!  magic values ahead!
+		return GetRandomGameObjectOnGrid(hideInHierarchy, "target", "World").transform;
 	}
 	
-	Vector3 GetRandomPositionOnGrid()
+	public GameObject GetRandomGameObjectOnGrid(bool hideInHierarchy, string name, string parentGameObjectName)
+	{
+		GameObject go = new GameObject();
+		go.name = (name);
+		go.transform.position = GetRandomVectorOnGrid();
+		go.transform.parent = GameObject.Find(parentGameObjectName).transform;
+		if (hideInHierarchy)
+    		go.hideFlags = HideFlags.HideInHierarchy;
+		return go;
+	}
+	
+	Vector3 GetRandomVectorOnGrid()
 	{
 		return new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2));
 	}

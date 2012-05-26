@@ -212,7 +212,7 @@ public class Badger : MonoBehaviour
 			print (roamTarget +", "+ roamTarget.gameObject.name +", "+ roamTarget.gameObject.tag);
 			Destroy(roamTarget.gameObject);
 		}
-		Transform t = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid();
+		Transform t = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid(true);
 		Vector3 tpos = t.position;
 		tpos.y += transform.lossyScale.y/2;
 		t.position = tpos;
