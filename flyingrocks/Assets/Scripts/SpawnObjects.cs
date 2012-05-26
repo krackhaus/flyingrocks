@@ -34,13 +34,14 @@ public class SpawnObjects : MonoBehaviour
 		GameObject go = new GameObject();
 		go.name = ("target");
 		go.transform.position = GetRandomPositionOnGrid();
-		go.transform.parent = GameObject.Find("World").transform;
+		go.transform.parent = GameObject.FindWithTag("World").transform;
     	go.hideFlags = HideFlags.HideInHierarchy;
 		return go.transform;
 	}
 	
 	Vector3 GetRandomPositionOnGrid()
 	{
-		return new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2));
+		return new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2)) + transform.position;
+		
 	}
 }
