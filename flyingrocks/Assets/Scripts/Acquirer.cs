@@ -20,11 +20,39 @@ public class Acquirer : MonoBehaviour
 	private Acquirable fixation;
 
 	/**
+	 * Broadcasts an intent to acquire the current fixation to both the
+	 * acquirable's game object and this game object. The OnAcquisition message
+	 * will have a different signature dependending on the target, the
+	 * acquirable implementation receiving no object and this game object's
+	 * implementation receiving the acquirable.
+	 */
+	public void AcquireFixation()
+	{
+		if (fixation != null) {
+			fixation.gameObject.SendMessage("OnAcquisition");
+			gameObject.SendMessage("OnAcquisitionOf", fixation);
+			Forget(fixation);
+		}
+	}
+
+	/**
+	 * Removes the current fixation.
+	 */
+	public void Forget()
+	{
+		if (fixation != null)
+			Forget(fixation);
+	}
+
+	/**
 	 * Removes the acquirable from the current temptations.
 	 */
-	public bool ForgetAbout(Acquirable acquirable)
+	public void Forget(Acquirable acquirable)
 	{
-		return temptations.Remove(acquirable.id);
+		temptations.Remove(acquirable.id);
+
+		if (fixation.id == acquirable.id)
+			fixation = null;
 	}
 
 	/**
@@ -56,17 +84,20 @@ public class Acquirer : MonoBehaviour
 	}
 
 	/**
-	 * Calculate fixation on every frame.
+	 * Calculate the fixation on every frame.
 	 */
-	private void Update() { CalculateFixation(); }
+	private void Update()
+	{
+		CalculateFixation();
+	}
 
 
 	/**
-	 * Highlight fixation.
+	 * Broadcast to the acquirable's game object about our fixation.
 	 */
-	void LateUpdate()
+	private void LateUpdate()
 	{
 		if (fixation != null)
-			fixation.Highlight();
+			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
