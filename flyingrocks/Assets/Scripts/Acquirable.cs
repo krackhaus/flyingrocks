@@ -7,8 +7,18 @@ using System.Collections;
  */
 public class Acquirable : MonoBehaviour
 {
+	/**
+	 * The highlighter used to... highlight the acquirable.
+	 */
+	public IHighlighter highlighter;
 
-	private IHighlighter highlighter;
+	/**
+	 * The identifier that should be used to keep track of the acquirable.
+	 */
+	public int id
+	{
+		get { return GetInstanceID(); }
+	}
 
 	/**
 	 * The acquirable type. Just goes off the tag value.
@@ -18,31 +28,58 @@ public class Acquirable : MonoBehaviour
 		get { return tag; }
 	}
 
+	/**
+	 * Returns the acquirable's distance from the given acquirer.
+	 */
+	public float DistanceFrom(Acquirer acquirer)
+	{
+		return (acquirer.transform.position - transform.position).magnitude;
+	}
+
+	/**
+	 * Highlights the acquirable.
+	 */
+	public void Highlight()
+	{
+		highlighter.SwitchOn();
+	}
+
+	/**
+	 * Finds the highlighter script component.
+	 */
 	void Awake()
 	{
 		highlighter = GetComponent(typeof(IHighlighter)) as IHighlighter;
 	}
 
   /**
-	 * Tempts Acquirer game objects that are within the collider.
+	 * Tempts the acquirer while he's within the collider.
    */
   void OnTriggerStay(Collider other)
   {
-		Debug.Log("in");
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 
 		if (acquirer != null)
-			if (acquirer.isTemptedBy(this))
-				highlighter.SwitchOn();
-			else
-				highlighter.SwitchOff();
+			acquirer.TemptWith(this);
 	}
 
+	/**
+	 * Tells the acquirer to forget the acquirable when he leaves the collider.
+	 */
   void OnTriggerExit(Collider other)
   {
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 
 		if (acquirer != null)
-			highlighter.SwitchOff();
+			acquirer.ForgetAbout(this);
+	}
+
+	/**
+	 * Switch the highlighter back off on every update. It's up to the acquirer
+	 * to highlight the acquirable if he wants it.
+	 */
+	void Update()
+	{
+		highlighter.SwitchOff();
 	}
 }
