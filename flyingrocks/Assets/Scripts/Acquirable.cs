@@ -28,6 +28,7 @@ public class Acquirable : MonoBehaviour
    */
   void OnTriggerStay(Collider other)
   {
+		Debug.Log("in");
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 
 		if (acquirer != null)

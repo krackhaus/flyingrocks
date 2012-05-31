@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections;
+
+[RequireComponent (typeof(Rigidbody))]
 
 public class Locomotor : MonoBehaviour {
   public float velocity = 10f;
