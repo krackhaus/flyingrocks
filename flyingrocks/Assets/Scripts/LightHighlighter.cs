@@ -7,18 +7,18 @@ using UnityEngine;
  */
 public class LightHighlighter : MonoBehaviour, IHighlighter
 {
-	public void switchOn()
+	public void SwitchOn()
 	{
 		light.enabled = true;
 	}
 
-	public void switchOff()
+	public void SwitchOff()
 	{
 		light.enabled = false;
 	}
 
 	void Start()
 	{
-		switchOff();
+		SwitchOff();
 	}
 }

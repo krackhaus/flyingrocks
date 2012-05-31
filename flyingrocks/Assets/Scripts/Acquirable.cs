@@ -32,9 +32,9 @@ public class Acquirable : MonoBehaviour
 
 		if (acquirer != null)
 			if (acquirer.isTemptedBy(this))
-				highlighter.switchOn();
+				highlighter.SwitchOn();
 			else
-				highlighter.switchOff();
+				highlighter.SwitchOff();
 	}
 
   void OnTriggerExit(Collider other)
@@ -42,6 +42,6 @@ public class Acquirable : MonoBehaviour
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 
 		if (acquirer != null)
-			highlighter.switchOff();
+			highlighter.SwitchOff();
 	}
 }
