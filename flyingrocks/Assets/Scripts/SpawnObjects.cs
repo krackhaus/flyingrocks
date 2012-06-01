@@ -35,10 +35,10 @@ public class SpawnObjects : MonoBehaviour
 		
 		
 		// warning!  magic values ahead!
-		return GetRandomGameObjectOnGrid(hideInHierarchy, "target", "World").transform;
+		return GetRandomGameObjectOnGrid("target", "World", hideInHierarchy).transform;
 	}
 	
-	public GameObject GetRandomGameObjectOnGrid(bool hideInHierarchy, string name, string parentGameObjectName)
+	public GameObject GetRandomGameObjectOnGrid(string name, string parentGameObjectName, bool hideInHierarchy)
 	{
 		GameObject go = new GameObject();
 		go.name = (name);

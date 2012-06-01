@@ -11,6 +11,7 @@ public class Badger : MonoBehaviour
 	List<Collider> senses = new List<Collider>(5);
 	bool[] flags = new bool[6];
 	float hungerLevel = 50;
+	float healthLevel = 50;
 	Transform ooiTarget, roamTarget = null;
 	
 	#region Overhead
@@ -55,18 +56,31 @@ public class Badger : MonoBehaviour
 	{
 		GameObject.Find("World").GetComponent<CameraController>().FocalPoint = gameObject;
 	}
+	
+	void OnCollision(Collider collider)
+	{
+		if (collider.GetType() == typeof(Acquirable))
+			DoDamage();
+	}
+			
+	void DoDamage()
+	{
+		healthLevel -= 10;
+		if(healthLevel == 0)
+			Destroy(gameObject);
+	}
 	#endregion
 	#region Behaviour
 	IEnumerator Forage()
 	{
-		Debug.Log (name +": foraging");
+		//Debug.Log (name +": foraging");
 		yield return StartCoroutine(MoveTowardTarget(false));
 		StartCoroutine(Eat());
 	}
 	
 	IEnumerator Roam(bool foraging)
 	{
-		Debug.Log (name + (foraging?": looking for food":" looking around"));
+		//Debug.Log (name + (foraging?": looking for food":" looking around"));
 		roamTarget = GetWaypoint();
 		yield return StartCoroutine(MoveTowardTarget(foraging));
 		if (ReachedTarget && foraging)
@@ -77,7 +91,7 @@ public class Badger : MonoBehaviour
 	
 	void Sleep()
 	{
-		Debug.Log (name +": sleeping");
+		//Debug.Log (name +": sleeping");
 		Invoke("MakeDecision", (quickness*0.75f) * 10);
 	}
 	
@@ -207,11 +221,8 @@ public class Badger : MonoBehaviour
 	
 	Transform GetWaypoint()
 	{
-		if (roamTarget != null)
-		{
-			print (roamTarget +", "+ roamTarget.gameObject.name +", "+ roamTarget.gameObject.tag);
+		if (roamTarget)
 			Destroy(roamTarget.gameObject);
-		}
 		Transform t = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid(true);
 		Vector3 tpos = t.position;
 		tpos.y += transform.lossyScale.y/2;
@@ -259,7 +270,7 @@ public class Badger : MonoBehaviour
 	
 	public bool Active
 	{
-		get { return Roaming & Foraging; }
+		get { return Roaming & Foraging & Eating; }
 		set
 		{
 			if (!value)
@@ -273,7 +284,7 @@ public class Badger : MonoBehaviour
 				}
 				catch
 				{
-					Debug.LogError ("Could not set Active to false!");
+					Debug.LogError ("Could not set Active flags (for " +name+ ") to false!");
 				}
 			}
 		}
