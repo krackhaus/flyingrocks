@@ -270,7 +270,7 @@ public class Badger : MonoBehaviour
 	
 	public bool Active
 	{
-		get { return Roaming & Foraging & Eating; }
+		get { return Roaming ^ Foraging ^ Eating; }
 		set
 		{
 			if (!value)
