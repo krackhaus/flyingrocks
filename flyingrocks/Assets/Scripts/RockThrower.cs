@@ -16,7 +16,10 @@ public class RockThrower : MonoBehaviour
 	 * The rock in hand.
 	 */
 	private GameObject rock;
-
+	
+	/* The location to spawn the rock in before it is thrown */
+	private Transform rockSpawnLocation;
+	
 	/**
 	 * Drops rock.
 	 */
@@ -29,9 +32,11 @@ public class RockThrower : MonoBehaviour
 	 */
 	public void ThrowRock()
 	{
+		if (rock == null) return;
 		rock.SetActiveRecursively(true);
-		rock.transform.position = transform.Find("RockSpawnLocation").transform.position;
-		rock.transform.rotation = transform.Find("RockSpawnLocation").transform.rotation;
+		rockSpawnLocation = transform.Find("RockSpawnLocation").transform;
+		rock.transform.position = rockSpawnLocation.position;
+		rock.transform.rotation = rockSpawnLocation.rotation;
 		rock.rigidbody.AddRelativeForce(Vector3.forward * strength, ForceMode.VelocityChange);
 		//rock.rigidbody.AddForce(Vector3.up * strength * 0.25f, ForceMode.Impulse);
 

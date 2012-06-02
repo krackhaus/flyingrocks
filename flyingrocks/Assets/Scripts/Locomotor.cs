@@ -16,14 +16,14 @@ public class Locomotor : MonoBehaviour {
   }
 
   public void TurnRight() {
-    transform.Rotate(new Vector3(0, 1, 0), turnRate * Time.deltaTime);
+    transform.Rotate(Vector3.up, turnRate * Time.deltaTime);
   }
 
   public void TurnLeft() {
-    transform.Rotate(new Vector3(0, -1, 0), turnRate * Time.deltaTime);
+    transform.Rotate(Vector3.up, -turnRate * Time.deltaTime);
   }
 
   public void Jump() {
-    rigidbody.AddForce(transform.up * jumpForce);
+    rigidbody.AddForce(Vector3.up * jumpForce);
   }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(Rigidbody))]
+
 public class Badger : MonoBehaviour
 {
 	public float quickness = 5;
@@ -57,15 +59,16 @@ public class Badger : MonoBehaviour
 		GameObject.Find("World").GetComponent<CameraController>().FocalPoint = gameObject;
 	}
 	
-	void OnCollision(Collider collider)
+	void OnCollision(Collider other)
 	{
-		if (collider.GetType() == typeof(Acquirable))
+		if (other.gameObject.name == "Rock")
 			DoDamage();
 	}
 			
 	void DoDamage()
 	{
 		healthLevel -= 10;
+		print (healthLevel);
 		if(healthLevel == 0)
 			Destroy(gameObject);
 	}
@@ -100,6 +103,7 @@ public class Badger : MonoBehaviour
 		while (Target && !ReachedTarget && hungerLevel < 150)
 		{
 			hungerLevel += 0.1f;
+			rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
 			transform.LookAt(Target);
 			if (foraging)
 			{
@@ -135,7 +139,7 @@ public class Badger : MonoBehaviour
 			hungerLevel--;
 			if (hungerLevel == 0)
 				Hungry = false;
-			Debug.Log (name +": nomnoms -- hunger level = "+ hungerLevel);
+			//Debug.Log (name +": nomnoms -- hunger level = "+ hungerLevel);
 			yield return new WaitForSeconds(quickness/5);
 		}
 		Eating = false;
