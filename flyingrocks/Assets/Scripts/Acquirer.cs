@@ -23,7 +23,8 @@ public class Acquirer : MonoBehaviour
 	/**
 	 * Current inventory.
 	 */
-	private Inventory inventory;
+	// TODO change back to private
+	public Inventory inventory;
 
 	/**
 	 * Current temptations. The object pool from which a fixation may result.
@@ -75,7 +76,7 @@ public class Acquirer : MonoBehaviour
 	{
 		temptations.Remove(acquirable.id);
 
-		if (fixation.id == acquirable.id)
+		if (fixation != null && fixation.id == acquirable.id)
 			fixation = null;
 	}
 

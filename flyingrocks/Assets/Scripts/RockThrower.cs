@@ -10,7 +10,7 @@ public class RockThrower : MonoBehaviour
 	/**
 	 * The strength of the rock thrower.
 	 */
-	public float strength;
+	public float strength = 20;
 
 	/**
 	 * The rock in hand.
@@ -29,8 +29,15 @@ public class RockThrower : MonoBehaviour
 	 */
 	public void ThrowRock()
 	{
-		//rock.transform.position = transform.position + (transform.position.forward * 2);
-		//rock.rigidbody.AddForce(transform.position.forward * strength, ForceMode.VelocityChange);
+		rock.SetActiveRecursively(true);
+		rock.transform.position = transform.Find("RockSpawnLocation").transform.position;
+		rock.transform.rotation = transform.Find("RockSpawnLocation").transform.rotation;
+		rock.rigidbody.AddRelativeForce(Vector3.forward * strength, ForceMode.VelocityChange);
+		//rock.rigidbody.AddForce(Vector3.up * strength * 0.25f, ForceMode.Impulse);
+
+		rock = null;
+
+		GetComponent<Acquirer>().inventory.Decrement("Rock");
 	}
 
 	/**

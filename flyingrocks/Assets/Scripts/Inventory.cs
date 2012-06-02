@@ -45,4 +45,9 @@ public class Inventory
 
 		return false;
 	}
+
+	public void Decrement(string type)
+	{
+		inventory[type] = inventory[type] - 1;
+	}
 }

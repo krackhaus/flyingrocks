@@ -36,7 +36,19 @@ public class Acquirable : MonoBehaviour
 	 */
 	void OnAcquisition()
 	{
-		collider.enabled = false;
+		// TODO deal with this.
+		//collider.enabled = false;
+	}
+
+	/**
+	 * Keeps track of the collider used to 
+	 */
+	void OnTriggerEnter(Collider other)
+	{
+		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
+
+		if (acquirer != null)
+			acquirer.TemptWith(this);
 	}
 
 	/**

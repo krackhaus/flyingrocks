@@ -9,11 +9,13 @@ public class WasdController : MonoBehaviour
 
   private Locomotor locomotor;
   private Acquirer acquirer;
+  private RockThrower thrower;
 
   void Start()
   {
     locomotor = GetComponent<Locomotor>();
     acquirer = GetComponent<Acquirer>();
+    thrower = GetComponent<RockThrower>();
   }
 
   void Update()
@@ -34,8 +36,12 @@ public class WasdController : MonoBehaviour
       locomotor.TurnRight();
     }
 
-    if (Input.GetKey(KeyCode.G)) {
+    if (Input.GetKeyDown(KeyCode.G)) {
 			acquirer.AcquireFixation();
+    }
+
+    if (Input.GetKeyDown(KeyCode.T)) {
+			thrower.ThrowRock();
     }
   }
 
