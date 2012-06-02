@@ -9,15 +9,26 @@ public class Acquirer : MonoBehaviour
 	public List<string> acquires;
 
 	/**
+	 * Limits on inventory items. Unfortunately Unity won't expose a Dictionary,
+	 * so we have to resort to a List of KeyValuePairs.
+	 */
+	public InventoryLimit[] inventoryLimits;
+
+	/**
+	 * Current fixation. The acquirable that the acquirer is currently most
+	 * interested in.
+	 */
+	private Acquirable fixation;
+
+	/**
+	 * Current inventory.
+	 */
+	private Inventory inventory;
+
+	/**
 	 * Current temptations. The object pool from which a fixation may result.
 	 */
 	private Dictionary<int, Acquirable> temptations = new Dictionary<int, Acquirable>();
-
-	/**
-	 * Current fixation. The acquirable that has the acquirer's full attention
-	 * and should be highlighted.
-	 */
-	private Acquirable fixation;
 
 	/**
 	 * Broadcasts an intent to acquire the current fixation to both the
@@ -25,13 +36,26 @@ public class Acquirer : MonoBehaviour
 	 * will have a different signature dependending on the target, the
 	 * acquirable implementation receiving no object and this game object's
 	 * implementation receiving the acquirable.
+	 *
+	 * Note that the fixation can only be acquired if the inventory will allow
+	 * it. Otherwise, OnFailedAcquisitionOf and OnFailedAcquisition are sent
+	 * instead.
 	 */
 	public void AcquireFixation()
 	{
 		if (fixation != null) {
-			fixation.gameObject.SendMessage("OnAcquisition");
-			gameObject.SendMessage("OnAcquisitionOf", fixation);
-			Forget(fixation);
+			if (inventory.Increment(fixation.type)) {
+				fixation.gameObject.SendMessage("OnAcquisition");
+				gameObject.SendMessage("OnAcquisitionOf", fixation);
+
+				Forget(fixation);
+			}
+			else {
+				fixation.gameObject.SendMessage("OnFailedAcquisition",
+						SendMessageOptions.DontRequireReceiver);
+				gameObject.SendMessage("OnFailedAcquisitionOf", fixation,
+						SendMessageOptions.DontRequireReceiver);
+			}
 		}
 	}
 
@@ -69,6 +93,14 @@ public class Acquirer : MonoBehaviour
 		}
 
 		return false;
+	}
+
+	/**
+	 * Initialize inventory.
+	 */
+	private void Awake()
+	{
+		inventory = new Inventory(inventoryLimits);
 	}
 
 	/**
