@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class Badger : MonoBehaviour
 {
 	public float quickness = 5;
-	public float hearingRange = 5;
+	//public float hearingRange = 5;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
-	List<Collider> senses = new List<Collider>(5);
+	//List<Collider> senses = new List<Collider>(5);
 	bool[] flags = new bool[6];
 	float hungerLevel = 50;
 	float healthLevel = 50;
@@ -17,14 +17,13 @@ public class Badger : MonoBehaviour
 	#region Overhead
 	void Awake()
 	{
-		transform.parent = GameObject.Find("Generated Enemies").transform;
-		renderer.material.color = Color.red;
+		//renderer.material.color = Color.red;
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
 		
 		// Setup Senses so we can detect and react to things in the environment
-		senses.Insert(0, transform.FindChild("HearingRange").GetComponent<SphereCollider>());
-		((SphereCollider)senses[0]).radius += hearingRange;
+		//senses.Insert(0, transform.FindChild("HearingRange").GetComponent<SphereCollider>());
+		//((SphereCollider)senses[0]).radius += hearingRange;
 		
 		// Initialize Flags
 		Hungry = true;
@@ -34,6 +33,7 @@ public class Badger : MonoBehaviour
 	
 	void Start()
 	{
+		//transform.parent = GameObject.Find("Generated Enemies").transform;
 		// Generate a list of all Objects of Interest with which to attract Badger to.
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag("ObjectOfInterest"))
 		{
@@ -312,10 +312,11 @@ public class Badger : MonoBehaviour
 			return null;
 		}
 	}
-	
+	/*
 	bool Hearing
 	{
 		get { return senses[0]; }
 	}
+	*/
 	#endregion
 }
