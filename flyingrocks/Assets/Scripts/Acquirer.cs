@@ -109,16 +109,17 @@ public class Acquirer : MonoBehaviour
 	 */
 	private void CalculateFixation()
 	{
-
 		foreach (Acquirable temptation in temptations.Values)
 			if (!fixation || temptation.DistanceFrom(this) < fixation.DistanceFrom(this))
 				fixation = temptation;
-		UpdateFixation();
+		
+		if (oldFixation != fixation)
+			UpdateFixations();
 	}
 	
-	void UpdateFixation()
+	void UpdateFixations()
 	{
-		if (oldFixation && oldFixation != fixation)
+		if (oldFixation)
 			oldFixation.gameObject.SendMessage("OnFixationDrop", this, SendMessageOptions.DontRequireReceiver);
 		if (fixation && !fixation.light.enabled)
 			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);

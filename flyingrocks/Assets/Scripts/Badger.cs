@@ -38,6 +38,7 @@ public class Badger : MonoBehaviour
 	void Start()
 	{
 		//transform.parent = GameObject.Find("Generated Enemies").transform;
+		
 		// Generate a list of all Objects of Interest with which to attract Badger to.
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag("ObjectOfInterest"))
 		{
@@ -61,9 +62,10 @@ public class Badger : MonoBehaviour
 		GameObject.Find("World").GetComponent<CameraController>().FocalPoint = gameObject;
 	}
 	
-	void OnCollision(Collider other)
+	void OnCollisionEnter(Collision collision)
 	{
-		if (other.gameObject.tag == "Rock")
+		print ("collision");
+		if (collision.gameObject.tag == "Rock")
 			DoDamage();
 	}
 			

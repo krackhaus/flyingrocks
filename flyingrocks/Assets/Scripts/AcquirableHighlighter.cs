@@ -30,13 +30,11 @@ public class AcquirableHighlighter : MonoBehaviour
 	 */
 	void OnFixation(Acquirer acquirer)
 	{
-		print ("light on");
 		highlighter.SwitchOn();
 	}
 	
 	void OnFixationDrop(Acquirer acquirer)
 	{
-		print ("light off");
 		highlighter.SwitchOff();
 	}
 	
