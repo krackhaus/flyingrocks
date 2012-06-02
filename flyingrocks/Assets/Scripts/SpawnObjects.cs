@@ -23,7 +23,7 @@ public class SpawnObjects : MonoBehaviour
 		{
 			GameObject go = Instantiate(g, GetRandomVectorOnGrid(), Quaternion.identity) as GameObject;
 			Vector3 goPos = go.transform.position;
-			goPos.y = go.transform.lossyScale.y/2;
+			goPos.y += go.transform.lossyScale.y/2;
 			go.transform.position = goPos;
 			go.name = g.name + (i+1);
 		}

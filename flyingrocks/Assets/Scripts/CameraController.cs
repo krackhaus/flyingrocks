@@ -39,7 +39,7 @@ public class CameraController : MonoBehaviour
 	{
 		if (determineFocalPoint)
 			FindFocalPoint();
-		fpos = focalPoint.transform.position;
+		//fpos = focalPoint.transform.position;
 		tpos = mainCamera.transform.position;
 		if (desiredHeight >= tpos.y)
 			mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, Quaternion.Euler(fpos), Time.deltaTime);
