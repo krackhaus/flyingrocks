@@ -8,6 +8,8 @@ public class Badger : MonoBehaviour
 {
 	public float quickness = 5;
 	//public float hearingRange = 5;
+	private float gridLength = 10;
+	private float gridHeight = 10;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
 	//List<Collider> senses = new List<Collider>(5);
@@ -61,14 +63,14 @@ public class Badger : MonoBehaviour
 	
 	void OnCollision(Collider other)
 	{
-		if (other.gameObject.name == "Rock")
+		if (other.gameObject.tag == "Rock")
 			DoDamage();
 	}
 			
 	void DoDamage()
 	{
 		healthLevel -= 10;
-		print (healthLevel);
+		Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
 		if(healthLevel == 0)
 			Destroy(gameObject);
 	}
@@ -227,7 +229,7 @@ public class Badger : MonoBehaviour
 	{
 		if (roamTarget)
 			Destroy(roamTarget.gameObject);
-		Transform t = GameObject.FindWithTag("World").GetComponent<SpawnObjects>().GetRandomTransformOnGrid(true);
+		Transform t = GetRandomGameObjectOnGrid("target", "World", true).transform;
 		Vector3 tpos = t.position;
 		tpos.y += transform.lossyScale.y/2;
 		t.position = tpos;
@@ -315,6 +317,22 @@ public class Badger : MonoBehaviour
 				return roamTarget;
 			return null;
 		}
+	}
+	
+	public GameObject GetRandomGameObjectOnGrid(string name, string parentGameObjectName, bool hideInHierarchy)
+	{
+		GameObject go = new GameObject();
+		go.name = (name);
+		go.transform.position = GetRandomVectorOnGrid();
+		go.transform.parent = GameObject.Find(parentGameObjectName).transform;
+		if (hideInHierarchy)
+    		go.hideFlags = HideFlags.HideInHierarchy;
+		return go;
+	}
+	
+	Vector3 GetRandomVectorOnGrid()
+	{
+		return new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2));// + transform.position;
 	}
 	/*
 	bool Hearing

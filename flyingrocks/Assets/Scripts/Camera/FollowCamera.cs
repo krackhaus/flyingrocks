@@ -15,7 +15,7 @@ public class FollowCamera : MonoBehaviour
 	/*
 	 *  Update class function
 	 */
-	private void FixedUpdate()
+	private void LateUpdate()
 	{
 		// Calculate and set camera position
 		Vector3 desiredPosition = this._target.TransformPoint(0, this._height, -this._distance);

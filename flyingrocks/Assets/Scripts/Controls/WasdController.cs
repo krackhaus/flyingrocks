@@ -28,12 +28,20 @@ public class WasdController : MonoBehaviour
       locomotor.GoBackward();
     }
 
-    if (Input.GetKey(KeyCode.A)) {
-      locomotor.TurnLeft();
+    if (Input.GetKey(KeyCode.D)) {
+      locomotor.StrafeRight();
     }
 
-    if (Input.GetKey(KeyCode.D)) {
+    if (Input.GetKey(KeyCode.A)) {
+      locomotor.StrafeLeft();
+    }
+
+    if (Input.GetKey(KeyCode.E)) {
       locomotor.TurnRight();
+    }
+
+    if (Input.GetKey(KeyCode.Q)) {
+      locomotor.TurnLeft();
     }
 
     if (Input.GetKeyDown(KeyCode.G)) {

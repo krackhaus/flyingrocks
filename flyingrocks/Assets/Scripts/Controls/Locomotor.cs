@@ -4,15 +4,28 @@ using UnityEngine;
 
 public class Locomotor : MonoBehaviour {
   public float velocity = 10f;
-  public float turnRate = 100;
+  public float turnRate = 100f;
   public float jumpForce = 10f;
-
+	
+	void Update()
+	{
+		rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
+	}
+	
   public void GoForward() {
     transform.Translate(Vector3.forward * velocity * Time.deltaTime);
   }
 
   public void GoBackward() {
-    transform.Translate(Vector3.forward * velocity * Time.deltaTime * -1);
+    transform.Translate(Vector3.forward * -velocity * Time.deltaTime);
+  }
+	
+  public void StrafeRight() {
+    transform.Translate(Vector3.right * velocity * Time.deltaTime * 0.5f);
+  }
+
+  public void StrafeLeft() {
+    transform.Translate(Vector3.right * -velocity * Time.deltaTime * 0.5f);
   }
 
   public void TurnRight() {

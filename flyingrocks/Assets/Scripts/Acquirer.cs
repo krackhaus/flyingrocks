@@ -18,7 +18,7 @@ public class Acquirer : MonoBehaviour
 	 * Current fixation. The acquirable that the acquirer is currently most
 	 * interested in.
 	 */
-	private Acquirable fixation;
+	private Acquirable fixation, oldFixation;
 
 	/**
 	 * Current inventory.
@@ -109,11 +109,20 @@ public class Acquirer : MonoBehaviour
 	 */
 	private void CalculateFixation()
 	{
-		fixation = null;
 
 		foreach (Acquirable temptation in temptations.Values)
-			if (fixation == null || temptation.DistanceFrom(this) < fixation.DistanceFrom(this))
+			if (!fixation || temptation.DistanceFrom(this) < fixation.DistanceFrom(this))
 				fixation = temptation;
+		UpdateFixation();
+	}
+	
+	void UpdateFixation()
+	{
+		if (oldFixation && oldFixation != fixation)
+			oldFixation.gameObject.SendMessage("OnFixationDrop", this, SendMessageOptions.DontRequireReceiver);
+		if (fixation && !fixation.light.enabled)
+			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);
+		oldFixation = fixation;
 	}
 
 	/**
@@ -127,10 +136,10 @@ public class Acquirer : MonoBehaviour
 
 	/**
 	 * Broadcast to the acquirable's game object about our fixation.
-	 */
 	private void LateUpdate()
 	{
 		if (fixation != null)
 			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);
 	}
+	 */
 }
