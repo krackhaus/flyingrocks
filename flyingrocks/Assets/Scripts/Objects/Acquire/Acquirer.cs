@@ -11,8 +11,13 @@ public class Acquirer : MonoBehaviour
 	public List<string> acquires;
 
 	/**
-	 * Limits on inventory items. Unfortunately Unity won't expose a Dictionary,
-	 * so we have to resort to a List of KeyValuePairs.
+	 * Current inventory.
+	 */
+	public Inventory inventory;
+
+	/**
+	 * Limits on inventory items. Unity won't expose a Dictionary, so we'll use
+	 * an array of our own key-value pairs.
 	 */
 	public InventoryLimit[] inventoryLimits;
 
@@ -21,12 +26,6 @@ public class Acquirer : MonoBehaviour
 	 * interested in.
 	 */
 	private Acquirable fixation, oldFixation;
-
-	/**
-	 * Current inventory.
-	 */
-	// TODO change back to private
-	public Inventory inventory;
 
 	/**
 	 * Current temptations. The object pool from which a fixation may result.

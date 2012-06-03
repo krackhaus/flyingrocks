@@ -8,18 +8,20 @@ using UnityEngine;
 public class RockThrower : MonoBehaviour
 {
 	/**
-	 * The strength of the rock thrower.
+	 * The associated acquirer.
 	 */
-	public float strength = 20;
+	private Acquirer acquirer;
+
+	/**
+	 * Our rock launcher.
+	 */
+	private Launcher launcher;
 
 	/**
 	 * The rock in hand.
 	 */
 	private GameObject rock;
-	
-	/* The location to spawn the rock in before it is thrown */
-	private Transform rockSpawnLocation;
-	
+
 	/**
 	 * Drops rock.
 	 */
@@ -28,21 +30,27 @@ public class RockThrower : MonoBehaviour
 	}
 
 	/**
-	 * Chucks it.
+	 * Chucks the rock and decrements the acquirer's inventory.
 	 */
 	public void ThrowRock()
 	{
 		if (rock == null) return;
+
+		// Re-enable the rock, and launch it.
 		rock.SetActiveRecursively(true);
-		rockSpawnLocation = transform.Find("RockSpawnLocation").transform;
-		rock.transform.position = rockSpawnLocation.position;
-		rock.transform.rotation = rockSpawnLocation.rotation;
-		rock.rigidbody.AddRelativeForce(Vector3.forward * strength, ForceMode.VelocityChange);
-		//rock.rigidbody.AddForce(Vector3.up * strength * 0.25f, ForceMode.Impulse);
+		launcher.Launch(rock);
 
 		rock = null;
+		acquirer.inventory.Decrement("Rock");
+	}
 
-		GetComponent<Acquirer>().inventory.Decrement("Rock");
+	/**
+	 * Gets the Acquirer and Launcher.
+	 */
+	private void Awake()
+	{
+		acquirer = GetComponent<Acquirer>();
+		launcher = GetComponentInChildren<Launcher>();
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class RockThrower : MonoBehaviour
 	 */
 	private void OnAcquisitionOf(Acquirable acquirable)
 	{
-		// NOTE The actual rock game object is the parent of the acquirable one.
+		// The actual rock game object is the parent of the acquirable one.
 		rock = acquirable.transform.parent.gameObject;
 
 		// For now, we'll just disable the rock game object.

@@ -48,6 +48,9 @@ public class Inventory
 
 	public void Decrement(string type)
 	{
-		inventory[type] = inventory[type] - 1;
+		int typeInventory;
+
+		if (inventory.TryGetValue(type, out typeInventory) && typeInventory > 0)
+			inventory[type] = typeInventory - 1;
 	}
 }
