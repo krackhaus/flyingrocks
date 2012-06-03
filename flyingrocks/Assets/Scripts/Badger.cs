@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), (typeof(DamageIndicator)))]
 
 public class Badger : MonoBehaviour
 {
@@ -64,7 +64,6 @@ public class Badger : MonoBehaviour
 	
 	void OnCollisionEnter(Collision collision)
 	{
-		print ("collision");
 		if (collision.gameObject.tag == "Rock")
 			DoDamage();
 	}
@@ -72,9 +71,10 @@ public class Badger : MonoBehaviour
 	void DoDamage()
 	{
 		healthLevel -= 10;
-		Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
+		//Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
 		if(healthLevel == 0)
 			Destroy(gameObject);
+		GetComponent<DamageIndicator>().DoDamage(transform.GetComponentInChildren<Renderer>(), 2, 0.25f);
 	}
 	#endregion
 	#region Behaviour
