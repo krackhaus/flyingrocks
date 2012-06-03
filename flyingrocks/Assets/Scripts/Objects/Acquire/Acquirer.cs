@@ -114,17 +114,24 @@ public class Acquirer : MonoBehaviour
 		foreach (Acquirable temptation in temptations.Values)
 			if (!fixation || temptation.DistanceFrom(this) < fixation.DistanceFrom(this))
 				fixation = temptation;
-		
+
 		if (oldFixation != fixation)
 			UpdateFixations();
 	}
-	
-	void UpdateFixations()
+
+	/**
+	 * Notifies fixation objects.
+	 */
+	private void UpdateFixations()
 	{
 		if (oldFixation)
-			oldFixation.gameObject.SendMessage("OnFixationDrop", this, SendMessageOptions.DontRequireReceiver);
+			oldFixation.gameObject.SendMessage("OnFixationDrop", this,
+					SendMessageOptions.DontRequireReceiver);
+
 		if (fixation && !fixation.light.enabled)
-			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);
+			fixation.gameObject.SendMessage("OnFixation", this,
+					SendMessageOptions.DontRequireReceiver);
+
 		oldFixation = fixation;
 	}
 
@@ -135,14 +142,4 @@ public class Acquirer : MonoBehaviour
 	{
 		CalculateFixation();
 	}
-
-
-	/**
-	 * Broadcast to the acquirable's game object about our fixation.
-	private void LateUpdate()
-	{
-		if (fixation != null)
-			fixation.gameObject.SendMessage("OnFixation", this, SendMessageOptions.DontRequireReceiver);
-	}
-	 */
 }

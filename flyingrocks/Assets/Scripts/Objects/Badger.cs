@@ -59,7 +59,7 @@ public class Badger : MonoBehaviour
 	
 	void OnCollisionEnter(Collision collision)
 	{
-		if (collision.gameObject.tag == "Rock" && !collision.transform.GetComponentInChildren<Acquirable>().IsGrounded)
+		if (collision.gameObject.tag == "Rock" && collision.rigidbody.velocity.magnitude > 0)
 			StartCoroutine(DoDamage());
 	}
 			

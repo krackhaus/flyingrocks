@@ -22,17 +22,6 @@ public class Acquirable : MonoBehaviour
 	{
 		get { return tag; }
 	}
-	
-	/*
-	 * It is good for us to know when these rocks are on the gound,
-	 * because if they are then they probably shouldn't be doing damage!
-	 */
-	private bool isGrounded = true;
-	
-	public bool IsGrounded
-	{
-		get { return isGrounded; }
-	}
 
 	/**
 	 * Returns the acquirable's distance from the given acquirer.
@@ -40,17 +29,6 @@ public class Acquirable : MonoBehaviour
 	public float DistanceFrom(Acquirer acquirer)
 	{
 		return (acquirer.transform.position - transform.position).magnitude;
-	}
-
-	/**
-	 * Disables the collider when acquired.
-	 */
-	void OnAcquisition()
-	{
-		
-		// TODO deal with this.
-		//collider.enabled = false;
-		isGrounded = false; // unfortunatly, however, I don't know of a good place to set it back to true;
 	}
 
 	/**
