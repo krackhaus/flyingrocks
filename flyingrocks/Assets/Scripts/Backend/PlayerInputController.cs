@@ -1,9 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(Locomotor))]
-[RequireComponent (typeof(Acquirer))]
-
 public class PlayerInputController : MonoBehaviour
 {
 	private Locomotor locomotor;
@@ -14,6 +11,9 @@ public class PlayerInputController : MonoBehaviour
 	private Vector2 mouse, position, rotation;
 	private float damper = 0.1f;
 	private bool sticksActive = false;
+	
+	public bool invertLookYAxis = false;
+	public float ySensitivity = 0.5f;
 
 	void Start ()
 	{
@@ -24,6 +24,10 @@ public class PlayerInputController : MonoBehaviour
 		Screen.showCursor = false;
 	}
 	
+	/*
+	 * TODO -- Pull out joystick initilization and allow multi-player spawning
+	 * for each attached joystick.
+	 */
 	void SetupJoysticks()
 	{
 		joystickNames = Input.GetJoystickNames() as string[];
@@ -72,30 +76,35 @@ public class PlayerInputController : MonoBehaviour
 		if (Input.GetButtonDown("Run"))
 			locomotor.Running = true;
 		
-		// MOUSE ----------------------
-		mouse.x = Input.GetAxis ("Mouse X");
-		mouse.y = Input.GetAxis ("Mouse Y");
-		locomotor.FreeLook(mouse.x, mouse.y);
-		
-		// JOYSTICK -------------------
+		// JOYSTICK / MOUSE -----------
 		if (Input.GetKeyDown(KeyCode.JoystickButton16))
 			sticksActive = !sticksActive;
-		if (!sticksActive) return;
-		position.x = Input.GetAxis("LeftStickHorizontal") * damper;
-		position.y = Input.GetAxis("LeftStickVertical") * damper;
-		rotation.x = Input.GetAxis("RightStickHorizontal");
-		rotation.y = Input.GetAxis("RightStickVertical");
-		locomotor.FreeLook(rotation.x, rotation.y);
-		locomotor.GoForward(position.y);
-		locomotor.Strafe(position.x);
-		if (position.magnitude == 0)
-			locomotor.Running = false;
+		if (!sticksActive)
+		{
+			mouse.x = Input.GetAxis ("Mouse X");
+			mouse.y = Input.GetAxis ("Mouse Y") * ySensitivity;
+			locomotor.FreeLook(mouse.x, (invertLookYAxis?mouse.y:-mouse.y));
+		}
+		else
+		{
+			position.x = Input.GetAxis("LeftStickHorizontal") * damper;
+			position.y = Input.GetAxis("LeftStickVertical") * damper;
+			rotation.x = Input.GetAxis("RightStickHorizontal");
+			rotation.y = Input.GetAxis("RightStickVertical") * ySensitivity;
+			locomotor.FreeLook(rotation.x, (invertLookYAxis?-rotation.y:rotation.y));
+			locomotor.GoForward(position.y);
+			locomotor.Strafe(position.x);
+			if (position.magnitude == 0)
+				locomotor.Running = false;
+		}
 	}
 	
 	void OnGUI()
 	{
 		if (JoystickAttached && !sticksActive)
 			GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' button to enable joystick.");
+		else
+			GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' again to disable joystick.");
 	}
 	
 	bool JoystickAttached

@@ -69,7 +69,7 @@ public class Badger : MonoBehaviour
 		//Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
 		yield return StartCoroutine(GetComponent<DamageIndicator>().FlashDamage());
 		GetComponent<DamageIndicator>().ResetMaterial();
-		if(healthLevel == 0)
+		if(healthLevel <= 0)
 			Destroy(gameObject);
 		
 	}

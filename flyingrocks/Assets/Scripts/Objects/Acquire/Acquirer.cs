@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[RequireComponent (typeof(Locomotor))]
+
 public class Acquirer : MonoBehaviour
 {
 	/**

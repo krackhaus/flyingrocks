@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent (typeof(Rigidbody))]
+[RequireComponent (typeof(Rigidbody), typeof(PlayerInputController))]
 
 public class Locomotor : MonoBehaviour
 {
@@ -21,6 +21,9 @@ public class Locomotor : MonoBehaviour
 	void FixedUpdate ()
 	{
 		rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
+		Transform tform = transform.FindChild("Face").transform;
+		Vector3 direction = tform.TransformDirection(Vector3.forward) * 5;
+		Debug.DrawRay(tform.position, direction, Color.red);
 	}
 	
 	public void GoForward ()
