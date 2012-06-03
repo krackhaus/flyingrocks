@@ -12,6 +12,7 @@ public class PlayerInputController : MonoBehaviour
 	private float damper = 0.1f;
 	private bool sticksActive = false;
 	
+	public bool stickAndMouse = false;
 	public bool invertLookYAxis = false;
 	public float ySensitivity = 0.5f;
 
@@ -79,13 +80,13 @@ public class PlayerInputController : MonoBehaviour
 		// JOYSTICK / MOUSE -----------
 		if (Input.GetKeyDown(KeyCode.JoystickButton16))
 			sticksActive = !sticksActive;
-		if (!sticksActive)
+		if (!sticksActive || stickAndMouse)
 		{
 			mouse.x = Input.GetAxis ("Mouse X");
 			mouse.y = Input.GetAxis ("Mouse Y") * ySensitivity;
 			locomotor.FreeLook(mouse.x, (invertLookYAxis?mouse.y:-mouse.y));
 		}
-		else
+		if (sticksActive)
 		{
 			position.x = Input.GetAxis("LeftStickHorizontal") * damper;
 			position.y = Input.GetAxis("LeftStickVertical") * damper;
@@ -101,10 +102,13 @@ public class PlayerInputController : MonoBehaviour
 	
 	void OnGUI()
 	{
-		if (JoystickAttached && !sticksActive)
-			GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' button to enable joystick.");
-		else
-			GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' again to disable joystick.");
+		if (JoystickAttached)
+		{
+			if (!sticksActive)
+				GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' button to enable joystick.");
+			else
+				GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' again to disable joystick.");
+		}
 	}
 	
 	bool JoystickAttached
