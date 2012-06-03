@@ -9,6 +9,14 @@ public class Locomotor : MonoBehaviour
 	public float jumpForce = 10f;
 	public float runningModifier = 1.5f;
 	private bool running = false;
+	private Transform headTransform;
+	
+	void Awake()
+	{
+		headTransform = transform.FindChild("Face").transform;
+		//rockSpawnTransform = transform.FindChild("RockSpawnLocation").transform;
+		//cameraTransform = GameObject.FindWithTag("MainCamera").transform;
+	}
 	
 	void FixedUpdate ()
 	{
@@ -19,10 +27,20 @@ public class Locomotor : MonoBehaviour
 	{
 		transform.Translate (Vector3.forward * (running ? velocity * runningModifier : velocity) * Time.deltaTime);
 	}
+	
+	public void GoForward (float velocity)
+	{
+		transform.Translate (Vector3.forward * (running ? velocity * runningModifier : velocity));
+	}
 
 	public void GoBackward ()
 	{
 		transform.Translate (Vector3.forward * -(running ? velocity * runningModifier : velocity) * Time.deltaTime * 0.65f);
+	}
+	
+	public void Strafe (float velocity)
+	{
+		transform.Translate (Vector3.right * (running ? velocity * runningModifier : velocity));
 	}
 	
 	public void StrafeRight ()
@@ -45,9 +63,10 @@ public class Locomotor : MonoBehaviour
 		transform.Rotate (Vector3.up, -turnRate * Time.deltaTime);
 	}
 	
-	public void MouseLook (float deltaX)
+	public void FreeLook (float deltaX, float deltaY)
 	{
 		transform.Rotate(Vector3.up, deltaX);
+		headTransform.Rotate(Vector3.right, deltaY); // just cause.
 	}
 
 	public void Jump ()
@@ -55,7 +74,12 @@ public class Locomotor : MonoBehaviour
 		rigidbody.AddForce (Vector3.up * jumpForce);
 	}
 	
-	public bool Running {
+	/*
+	 * Dan: I realized why I use PascalCase...because I use the same name as the variable.
+	 * I also see you favor using underscores...not sure I can get on board with that, lol.
+	 */
+	public bool Running
+	{
 		set { running = value; }
 	}
 }

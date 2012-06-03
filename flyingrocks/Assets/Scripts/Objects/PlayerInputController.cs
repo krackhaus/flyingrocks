@@ -6,10 +6,12 @@ using System.Collections;
 
 public class PlayerInputController : MonoBehaviour
 {
-	public bool useMouse = true;
 	private Locomotor locomotor;
 	private Acquirer acquirer;
 	private RockThrower thrower;
+	
+	private Vector2 mouse, position, rotation;
+	private float damper = 0.1f;
 
 	void Start ()
 	{
@@ -21,6 +23,7 @@ public class PlayerInputController : MonoBehaviour
 
 	void Update ()
 	{
+		//KEYBOARD --------------------
 		if (Input.GetKey (KeyCode.W)) {
 			locomotor.GoForward ();
 		}
@@ -44,25 +47,35 @@ public class PlayerInputController : MonoBehaviour
 		if (Input.GetKey (KeyCode.Q)) {
 			locomotor.TurnLeft ();
 		}
-
-		if (Input.GetKeyDown (KeyCode.LeftShift)) {
-			locomotor.Running = true;
-		}
-
-		if (Input.GetKeyUp (KeyCode.LeftShift)) {
-			locomotor.Running = false;
-		}
-
-		if (Input.GetMouseButton (1) || Input.GetKey (KeyCode.G)) {
-			acquirer.AcquireFixation ();
-		}
-
-		if (Input.GetMouseButton (0) || Input.GetKey (KeyCode.T)) {
-			thrower.ThrowRock ();
-		}
 		
-		float mouseX = Input.GetAxis ("Mouse X");
-		locomotor.MouseLook (mouseX);
+		if (Input.GetKey(KeyCode.Space))
+			locomotor.Jump();
+		
+		// HYBRID ---------------------
+		if (Input.GetMouseButton (0) || Input.GetButtonDown("Fire"))
+			thrower.ThrowRock ();
+		
+		if (Input.GetMouseButton (1) || Input.GetButtonDown("Action"))
+			acquirer.AcquireFixation ();
+
+		if (Input.GetButton("Run"))
+			locomotor.Running = true;
+		
+		// MOUSE ----------------------
+		mouse.x = Input.GetAxis ("Mouse X");
+		mouse.y = Input.GetAxis ("Mouse Y");
+		locomotor.FreeLook(mouse.x, mouse.y);
+		
+		// JOYSTICK -------------------
+		position.x = Input.GetAxis("LeftStickHorizontal") * damper;
+		position.y = Input.GetAxis("LeftStickVertical") * damper;
+		rotation.x = Input.GetAxis("RightStickHorizontal");
+		rotation.y = Input.GetAxis("RightStickVertical");
+		locomotor.FreeLook(rotation.x, rotation.y);
+		locomotor.GoForward(position.y);
+		locomotor.Strafe(position.x);
+		if (position.x + position.y == 0)
+			locomotor.Running = false;
 	}
 
 }

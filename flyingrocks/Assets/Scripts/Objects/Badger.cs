@@ -57,24 +57,20 @@ public class Badger : MonoBehaviour
 			StartCoroutine(MoveTowardTarget(false));
 	}
 	
-	void OnMouseDown()
-	{
-		GameObject.Find("World").GetComponent<CameraController>().FocalPoint = gameObject;
-	}
-	
 	void OnCollisionEnter(Collision collision)
 	{
-		if (collision.gameObject.tag == "Rock")
-			DoDamage();
+		if (collision.gameObject.tag == "Rock" && !collision.transform.GetComponentInChildren<Acquirable>().IsGrounded)
+			StartCoroutine(DoDamage());
 	}
 			
-	void DoDamage()
+	IEnumerator DoDamage()
 	{
 		healthLevel -= 10;
 		//Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
+		yield return StartCoroutine(GetComponent<DamageIndicator>().FlashDamage());
 		if(healthLevel == 0)
 			Destroy(gameObject);
-		GetComponent<DamageIndicator>().DoDamage(transform.GetComponentInChildren<Renderer>(), 2, 0.25f);
+		
 	}
 	#endregion
 	#region Behaviour

@@ -4,26 +4,30 @@ using System.Collections;
 public class DamageIndicator : MonoBehaviour
 {
 	public Color damageColor = Color.red;
+	public int timesToFlash = 2;
+	public float frequency = 0.25f;
 	
-	public void DoDamage(Renderer renderer, int timesToFlash, float frequency)
+	private Color naturalColor;
+	private Material material;
+	
+	void Awake()
 	{
-		StartCoroutine(FlashDamage(renderer, timesToFlash, frequency));
+		naturalColor = transform.GetComponentInChildren<Renderer>().material.color;
+		material = transform.GetComponentInChildren<Renderer>().material;
 	}
 	
-	IEnumerator FlashDamage(Renderer renderer, int timesToFlash, float frequency)
+	public IEnumerator FlashDamage()
 	{
-		Material mat = renderer.material;
-		Color naturalColor = mat.color;
 		int timesFlashed = 0;
-		while (timesToFlash * 2> timesFlashed)
+		while (timesToFlash * 2 > timesFlashed)	// use of magic no.2 allows for 'timesToFlash' value to indicate on/off cycles.
 		{
-			if (naturalColor == mat.color)
-				mat.color = damageColor;
+			if (naturalColor == material.color)
+				material.color = damageColor;
 			else
-				mat.color = naturalColor;
+				material.color = naturalColor;
 			timesFlashed++;
 			yield return new WaitForSeconds(frequency);
 		}
-		mat.color = naturalColor;
+		material.color = naturalColor;
 	}
 }
