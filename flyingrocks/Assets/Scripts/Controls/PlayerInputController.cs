@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent (typeof(Locomotor))]
 [RequireComponent (typeof(Acquirer))]
 
-public class WasdController : MonoBehaviour
+public class PlayerInputController : MonoBehaviour
 {
 
   private Locomotor locomotor;
@@ -16,6 +16,7 @@ public class WasdController : MonoBehaviour
     locomotor = GetComponent<Locomotor>();
     acquirer = GetComponent<Acquirer>();
     thrower = GetComponent<RockThrower>();
+	Screen.showCursor = false;
   }
 
   void Update()
@@ -44,12 +45,20 @@ public class WasdController : MonoBehaviour
       locomotor.TurnLeft();
     }
 
-    if (Input.GetKeyDown(KeyCode.G)) {
-			acquirer.AcquireFixation();
+    if (Input.GetKeyDown(KeyCode.LeftShift)) {
+		locomotor.Running = true;
     }
 
-    if (Input.GetKeyDown(KeyCode.T)) {
-			thrower.ThrowRock();
+    if (Input.GetKeyUp(KeyCode.LeftShift)) {
+		locomotor.Running = false;
+    }
+
+    if (Input.GetMouseButton(1)) {
+		acquirer.AcquireFixation();
+    }
+
+    if (Input.GetMouseButton(0)) {
+		thrower.ThrowRock();
     }
   }
 
