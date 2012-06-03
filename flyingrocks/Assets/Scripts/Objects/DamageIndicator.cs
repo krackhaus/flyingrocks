@@ -12,22 +12,28 @@ public class DamageIndicator : MonoBehaviour
 	
 	void Awake()
 	{
-		naturalColor = transform.GetComponentInChildren<Renderer>().material.color;
 		material = transform.GetComponentInChildren<Renderer>().material;
+		naturalColor = material.color;
 	}
 	
 	public IEnumerator FlashDamage()
 	{
 		int timesFlashed = 0;
-		while (timesToFlash * 2 > timesFlashed)	// use of magic no.2 allows for 'timesToFlash' value to indicate on/off cycles.
+		while ((timesToFlash * 2) > timesFlashed)	// use of magic no.2 allows for 'timesToFlash' value to indicate on/off cycles.
 		{
-			if (naturalColor == material.color)
+			if (material.color != damageColor)
 				material.color = damageColor;
 			else
-				material.color = naturalColor;
-			timesFlashed++;
+				ResetMaterial();
+			timesFlashed += 1;
 			yield return new WaitForSeconds(frequency);
 		}
+		ResetMaterial();
+	}
+	
+	// This is a patch for a bug where the material color remained with the damage color on.
+	public void ResetMaterial()
+	{
 		material.color = naturalColor;
 	}
 }

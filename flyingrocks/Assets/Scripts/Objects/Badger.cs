@@ -8,8 +8,8 @@ public class Badger : MonoBehaviour
 {
 	public float quickness = 5;
 	//public float hearingRange = 5;
-	private float gridLength = 10;
-	private float gridHeight = 10;
+	private float gridLength = 30;
+	private float gridHeight = 30;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
 	//List<Collider> senses = new List<Collider>(5);
@@ -68,6 +68,7 @@ public class Badger : MonoBehaviour
 		healthLevel -= 10;
 		//Debug.Log ("Doing damage to Badger.  Health now at " +healthLevel+ ".");
 		yield return StartCoroutine(GetComponent<DamageIndicator>().FlashDamage());
+		GetComponent<DamageIndicator>().ResetMaterial();
 		if(healthLevel == 0)
 			Destroy(gameObject);
 		
