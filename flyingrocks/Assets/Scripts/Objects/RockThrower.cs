@@ -18,11 +18,6 @@ public class RockThrower : MonoBehaviour
 	private Launcher launcher;
 
 	/**
-	 * The rock in hand.
-	 */
-	private GameObject rock;
-
-	/**
 	 * Drops rock.
 	 */
 	public void DropRock()
@@ -30,18 +25,16 @@ public class RockThrower : MonoBehaviour
 	}
 
 	/**
-	 * Chucks the rock and decrements the acquirer's inventory.
+	 * Removes a rock from the inventory and launches it.
 	 */
 	public void ThrowRock()
 	{
-		if (rock == null) return;
+		GameObject rock;
 
-		// Re-enable the rock, and launch it.
-		rock.SetActiveRecursively(true);
-		launcher.Launch(rock);
-
-		rock = null;
-		acquirer.inventory.Decrement("Rock");
+		if (acquirer.inventory.Remove("Rock", out rock)) {
+			rock.SetActiveRecursively(true);
+			launcher.Launch(rock);
+		}
 	}
 
 	/**
@@ -54,15 +47,11 @@ public class RockThrower : MonoBehaviour
 	}
 
 	/**
-	 * Places acquired rock in hand.
+	 * Disables the rock upon acquisition.
 	 */
 	private void OnAcquisitionOf(Acquirable acquirable)
 	{
-		// The actual rock game object is the parent of the acquirable one.
-		rock = acquirable.transform.parent.gameObject;
-
-		// For now, we'll just disable the rock game object.
-		rock.SetActiveRecursively(false);
+		acquirable.inventoryObject.SetActiveRecursively(false);
 	}
 
 	/**

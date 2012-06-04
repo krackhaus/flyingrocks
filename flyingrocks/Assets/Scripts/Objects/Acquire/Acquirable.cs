@@ -8,6 +8,15 @@ using System.Collections;
 public class Acquirable : MonoBehaviour
 {
 	/**
+	 * The actual game object that should be inventoried, assumed to be the
+	 * parent game object.
+	 */
+	public GameObject inventoryObject
+	{
+		get { return transform.parent.gameObject; }
+	}
+
+	/**
 	 * The identifier that should be used to keep track of the acquirable.
 	 */
 	public int id

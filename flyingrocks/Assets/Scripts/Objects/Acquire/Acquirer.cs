@@ -13,7 +13,7 @@ public class Acquirer : MonoBehaviour
 	/**
 	 * Current inventory.
 	 */
-	public Inventory inventory;
+	public Inventory<GameObject> inventory;
 
 	/**
 	 * Limits on inventory items. Unity won't expose a Dictionary, so we'll use
@@ -46,7 +46,10 @@ public class Acquirer : MonoBehaviour
 	public void AcquireFixation()
 	{
 		if (fixation != null) {
-			if (inventory.Increment(fixation.type)) {
+
+			if (inventory.Add(fixation.type, fixation.inventoryObject)) {
+				Debug.Log("acquired " + fixation.type);
+
 				fixation.gameObject.SendMessage("OnAcquisition");
 				gameObject.SendMessage("OnAcquisitionOf", fixation);
 
@@ -88,8 +91,9 @@ public class Acquirer : MonoBehaviour
 	public bool TemptWith(Acquirable acquirable)
 	{
 		if (acquires.Contains(acquirable.type)) {
-			if (!temptations.ContainsKey(acquirable.id))
+			if (!temptations.ContainsKey(acquirable.id)) {
 				temptations.Add(acquirable.id, acquirable);
+			}
 
 			return true;
 		}
@@ -102,7 +106,7 @@ public class Acquirer : MonoBehaviour
 	 */
 	private void Awake()
 	{
-		inventory = new Inventory(inventoryLimits);
+		inventory = new Inventory<GameObject>(inventoryLimits);
 	}
 
 	/**
