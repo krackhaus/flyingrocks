@@ -18,6 +18,16 @@ public class Launcher : MonoBehaviour
 	public ForceMode forceMode = ForceMode.VelocityChange;
 
 	/**
+	 * Relative torque to add to the object when launched.
+	 */
+	public Vector3 torque;
+
+	/**
+	 * The type of force to use when applying torque.
+	 */
+	public ForceMode torqueForceMode = ForceMode.VelocityChange;
+
+	/**
 	 * Orients and launches the given game object.
 	 */
 	public void Launch(GameObject projectile)
@@ -25,5 +35,6 @@ public class Launcher : MonoBehaviour
 		projectile.transform.position = transform.position;
 		projectile.transform.rotation = transform.rotation;
 		projectile.rigidbody.AddRelativeForce(Vector3.forward * force, forceMode);
+		projectile.rigidbody.AddRelativeTorque(torque, torqueForceMode);
 	}
 }
