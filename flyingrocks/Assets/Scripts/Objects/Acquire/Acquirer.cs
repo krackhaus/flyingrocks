@@ -22,6 +22,11 @@ public class Acquirer : MonoBehaviour
 	public InventoryLimit[] inventoryLimits;
 
 	/**
+	 * Type of fixation to use.
+	 */
+	public Fixator.Type fixationType;
+
+	/**
 	 * Current fixation. The acquirable that the acquirer is currently most
 	 * interested in.
 	 */
@@ -31,6 +36,11 @@ public class Acquirer : MonoBehaviour
 	 * Current temptations. The object pool from which a fixation may result.
 	 */
 	private Dictionary<int, Acquirable> temptations = new Dictionary<int, Acquirable>();
+
+	/**
+	 * Fixator delegate.
+	 */
+	private FixatorDelegate fixate;
 
 	/**
 	 * Broadcasts an intent to acquire the current fixation to both the
@@ -102,21 +112,21 @@ public class Acquirer : MonoBehaviour
 	}
 
 	/**
-	 * Initialize inventory.
+	 * Initialize inventory and fixator delegate.
 	 */
 	private void Awake()
 	{
 		inventory = new Inventory<GameObject>(inventoryLimits);
+
+		fixate = Fixator.Delegate(fixationType, this);
 	}
 
 	/**
-	 * Calculate the current fixation by shortest distance from the acquirer.
+	 * Calculate the current fixation by calling the fixator delegate.
 	 */
 	private void CalculateFixation()
 	{
-		foreach (Acquirable temptation in temptations.Values)
-			if (!fixation || temptation.DistanceFrom(this) < fixation.DistanceFrom(this))
-				fixation = temptation;
+		fixation = fixate(temptations);
 
 		if (oldFixation != fixation)
 			UpdateFixations();
