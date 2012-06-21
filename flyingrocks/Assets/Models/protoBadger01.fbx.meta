@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f8cbf79c9f3757b40b43d9b21809c4fd
+guid: 0674a8e7cb9e9e7479066080cd7f6677
 ModelImporter:
   fileIDToRecycleName:
     4300000: badger
@@ -21,7 +21,7 @@ ModelImporter:
     clipAnimations: []
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: .00999999978
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
