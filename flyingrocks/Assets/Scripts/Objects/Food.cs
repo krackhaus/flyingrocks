@@ -9,7 +9,6 @@ public class Food : ObjectOfInterest
 	override protected void Awake()
 	{
 		density = Density.Average;
-		renderer.material.color = Color.green;
 		//transform.parent = GameObject.Find("Badger Noms").transform;
 		
 		base.Awake();

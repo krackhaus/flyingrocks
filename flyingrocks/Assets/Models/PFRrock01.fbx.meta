@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 0674a8e7cb9e9e7479066080cd7f6677
+guid: 14a801e5a268ce541b7e06b79e8a240f
 ModelImporter:
   fileIDToRecycleName:
-    4300000: badger
-    7400000: Default Take //// protoBadger01
+    4300000: Icosphere
+    7400000: Default Take //// PFRrock01
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -21,7 +21,7 @@ ModelImporter:
     clipAnimations: []
   meshes:
     lODScreenPercentages: []
-    globalScale: .25
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
