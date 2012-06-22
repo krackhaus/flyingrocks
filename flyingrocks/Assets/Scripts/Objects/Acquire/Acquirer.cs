@@ -58,8 +58,6 @@ public class Acquirer : MonoBehaviour
 		if (fixation != null) {
 
 			if (inventory.Add(fixation.type, fixation.inventoryObject)) {
-				Debug.Log("acquired " + fixation.type);
-
 				fixation.gameObject.SendMessage("OnAcquisition");
 				gameObject.SendMessage("OnAcquisitionOf", fixation);
 

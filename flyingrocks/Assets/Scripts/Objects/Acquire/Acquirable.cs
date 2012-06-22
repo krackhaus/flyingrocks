@@ -41,17 +41,6 @@ public class Acquirable : MonoBehaviour
 	}
 
 	/**
-	 * Keeps track of the collider used to 
-	 */
-	void OnTriggerEnter(Collider other)
-	{
-		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
-
-		if (acquirer != null)
-			acquirer.TemptWith(this);
-	}
-
-	/**
 	 * Tempts the acquirer while he's within the collider.
 	 */
 	void OnTriggerStay(Collider other)
