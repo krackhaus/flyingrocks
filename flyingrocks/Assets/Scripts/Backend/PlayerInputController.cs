@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Locomotor))]
 public class PlayerInputController : MonoBehaviour
 {
 	private Locomotor locomotor;

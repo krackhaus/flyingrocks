@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections;
 
-[RequireComponent (typeof(Rigidbody), typeof(PlayerInputController))]
+[RequireComponent (typeof(Rigidbody))]
 
 public class Locomotor : MonoBehaviour
 {
@@ -8,22 +9,27 @@ public class Locomotor : MonoBehaviour
 	public float turnRate = 100f;
 	public float jumpForce = 10f;
 	public float runningModifier = 1.5f;
+	
+	private bool hasHead = false;
 	private bool running = false;
 	private Transform headTransform;
 	
 	void Awake()
 	{
-		headTransform = transform.FindChild("Face").transform;
-		//rockSpawnTransform = transform.FindChild("RockSpawnLocation").transform;
-		//cameraTransform = GameObject.FindWithTag("MainCamera").transform;
+		//this kind of data will come from the object's controller class later on...
+		try
+		{
+			headTransform = transform.FindChild("Face").transform;
+			hasHead = true;
+		}
+		catch{}
 	}
 	
 	void FixedUpdate ()
 	{
-		rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
-		Transform tform = transform.FindChild("Face").transform;
-		Vector3 direction = tform.TransformDirection(Vector3.forward) * 5;
-		Debug.DrawRay(tform.position, direction, Color.red);
+		//rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
+		if (hasHead)
+			Debug.DrawRay(headTransform.position, (headTransform.TransformDirection(Vector3.forward) * 5), Color.red);
 	}
 	
 	public void GoForward ()
@@ -69,7 +75,8 @@ public class Locomotor : MonoBehaviour
 	public void FreeLook (float deltaX, float deltaY)
 	{
 		transform.Rotate(Vector3.up, deltaX);
-		headTransform.Rotate(Vector3.right, deltaY); // just cause.
+		if (hasHead)
+			headTransform.Rotate(Vector3.right, deltaY); // just cause.
 	}
 
 	public void Jump ()
@@ -85,4 +92,19 @@ public class Locomotor : MonoBehaviour
 	{
 		set { running = value; }
 	}
+	
+	#region AI specific locomotion
+	public IEnumerator TurnToFace(Vector3 position, float rate)
+	{
+		Quaternion lookAt = Quaternion.LookRotation(position - transform.position, Vector3.up);
+		
+		while ( Quaternion.Angle(transform.rotation, lookAt) > 1 )
+		{
+			lookAt = Quaternion.LookRotation(position - transform.position, Vector3.up);
+			transform.rotation = Quaternion.Lerp(transform.rotation, lookAt, 3 * Time.deltaTime);
+			//check for attactors in fov
+			yield return new WaitForSeconds(Time.deltaTime);
+		}
+	}
+	#endregion
 }

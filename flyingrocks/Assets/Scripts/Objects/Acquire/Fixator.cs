@@ -13,7 +13,7 @@ public abstract class Fixator
 	/**
 	 * Available fixator types.
 	 */
-	public enum Type { Proximity };
+	public enum Type { Proximity, VisibleProximity };
 
 	/**
 	 * The acquirer.
@@ -30,9 +30,12 @@ public abstract class Fixator
 
 		switch (type) {
 			// Proximity is the default type
-			default:
-				fixator = new ProximityFixator();
-				break;
+		case Type.VisibleProximity:
+			fixator = new VisibleProximityFixator();
+			break;
+		default:
+			fixator = new ProximityFixator();
+			break;
 		}
 
 		fixator.acquirer = acq;

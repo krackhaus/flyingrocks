@@ -1,38 +1,49 @@
+#define USE_OLD_CODE
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Rigidbody), (typeof(DamageIndicator)))]
+public delegate void OnAngerEvent(float anger);
+public delegate void OnHungerEvent(float hunger);
+public delegate void OnDangerEvent(float danger);
 
-public class Badger : MonoBehaviour
+[RequireComponent(typeof(DamageIndicator), typeof(Stats))]
+[RequireComponent(typeof(Rigidbody), typeof(Locomotor), typeof(Stats))]
+
+public class Essence: MonoBehaviour
 {
+	public event OnAngerEvent HandleOnAnger;
+	public event OnHungerEvent HandleOnHunger;
+	public event OnDangerEvent HandleOnDanger;
+	
+#if USE_OLD_CODE
 	public float quickness = 5;
-	//public float hearingRange = 5;
 	private float gridLength = 30;
 	private float gridHeight = 30;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
-	//List<Collider> senses = new List<Collider>(5);
+	bool[] states = new bool[5];
 	bool[] flags = new bool[6];
 	float hungerLevel = 50;
 	float healthLevel = 50;
 	Transform ooiTarget, roamTarget = null;
+#endif
+	
+	public float intellgence = 1;
+	public int memoryLength = 64;	//size of array, must be an int.
+	
+	private Locomotor locomotor;
+	private Stats stats;
 	
 	#region Overhead
 	void Awake()
 	{
-		//renderer.material.color = Color.red;
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
-		
-		// Setup Senses so we can detect and react to things in the environment
-		//senses.Insert(0, transform.FindChild("HearingRange").GetComponent<SphereCollider>());
-		//((SphereCollider)senses[0]).radius += hearingRange;
-		
-		// Initialize Flags
 		Hungry = true;
-		Active = Tired = Eating = Foraging = KnowsWhereFoodIs = false;
 		
+		locomotor = GetComponent<Locomotor>();
 	}
 	
 	void Start()
@@ -62,7 +73,16 @@ public class Badger : MonoBehaviour
 		if (collision.gameObject.tag == "Rock" && collision.rigidbody.velocity.magnitude > 0)
 			StartCoroutine(DoDamage());
 	}
-			
+	
+	public void MakeAlert(bool danger)
+	{
+		if (danger) 
+			Hungry = false;
+		Active = false;
+		MakeDecision();
+	}
+	#endregion
+	#region Behaviour
 	IEnumerator DoDamage()
 	{
 		healthLevel -= 10;
@@ -73,8 +93,7 @@ public class Badger : MonoBehaviour
 			Destroy(gameObject);
 		
 	}
-	#endregion
-	#region Behaviour
+	
 	IEnumerator Forage()
 	{
 		//Debug.Log (name +": foraging");
@@ -101,11 +120,12 @@ public class Badger : MonoBehaviour
 	
 	IEnumerator MoveTowardTarget(bool foraging)
 	{
+		print (Target.tag);
+		yield return StartCoroutine(locomotor.TurnToFace(Target.position, 5)); // move turn speed to pub var deg/sec
 		while (Target && !ReachedTarget && hungerLevel < 150)
 		{
 			hungerLevel += 0.1f;
 			rigidbody.velocity = rigidbody.angularVelocity = Vector3.zero;
-			transform.LookAt(Target);
 			if (foraging)
 			{
 				if(FindClosestFood())
@@ -115,10 +135,10 @@ public class Badger : MonoBehaviour
 				}
 			}
 			if (hungerLevel < 100)
-				transform.Translate(Vector3.forward);
+				locomotor.GoForward(0.1f);
 			else
-				transform.Translate(Vector3.forward/2);
-			yield return new WaitForSeconds((quickness/5));
+				locomotor.GoForward(0.05f);
+			yield return new WaitForSeconds(Time.deltaTime);
 		}
 	}
 	
@@ -208,7 +228,7 @@ public class Badger : MonoBehaviour
 		return KnowsWhereFoodIs = returnValue;
 	}
 	
-	bool CanSee(Transform transformOfInterest)
+	public bool CanSee(Transform transformOfInterest)
 	{
 		const float halfFOV = 30f;
 		Vector3 heading = (transformOfInterest.position - transform.position).normalized;
@@ -284,7 +304,7 @@ public class Badger : MonoBehaviour
 				{
 					Roaming = Foraging = Eating = value;
 					rigidbody.angularVelocity = rigidbody.velocity = Vector3.zero;
-					transform.rotation = Quaternion.identity;
+					//transform.rotation = Quaternion.identity; -- what was this here for?
 					StopAllCoroutines();
 				}
 				catch
@@ -306,7 +326,7 @@ public class Badger : MonoBehaviour
 		}
 	}
 	
-	Transform Target
+	public Transform Target
 	{
 		get
 		{
@@ -333,11 +353,5 @@ public class Badger : MonoBehaviour
 	{
 		return new Vector3(Random.Range(-gridHeight/2, gridHeight/2), 0, Random.Range(-gridLength/2, gridLength/2));// + transform.position;
 	}
-	/*
-	bool Hearing
-	{
-		get { return senses[0]; }
-	}
-	*/
 	#endregion
 }

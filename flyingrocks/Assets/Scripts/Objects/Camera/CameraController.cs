@@ -60,7 +60,7 @@ public class CameraController : MonoBehaviour
 	
 	void FindFocalPoint()
 	{
-		if (focalPoint.GetType().Equals(typeof(Badger))) return;
+		if (focalPoint.GetType().Equals(typeof(Essence))) return;
 		Vector3 pos = new Vector3(0,0,0);
 		try
 		{

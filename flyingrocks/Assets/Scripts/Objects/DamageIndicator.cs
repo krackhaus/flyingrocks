@@ -9,11 +9,17 @@ public class DamageIndicator : MonoBehaviour
 	
 	private Color naturalColor;
 	private Material material;
+	//private bool hasMaterial;
 	
 	void Awake()
 	{
-		material = transform.GetComponentInChildren<Renderer>().material;
-		naturalColor = material.color;
+		try
+		{
+			material = transform.GetComponentInChildren<Renderer>().material;
+			naturalColor = material.color;
+			//hasMaterial = true;
+		}
+		catch{}
 	}
 	
 	public IEnumerator FlashDamage()
