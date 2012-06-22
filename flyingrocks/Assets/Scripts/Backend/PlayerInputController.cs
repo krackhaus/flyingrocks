@@ -69,14 +69,17 @@ public class PlayerInputController : MonoBehaviour
 			locomotor.Jump();
 		
 		// HYBRID ---------------------
-		if (Input.GetMouseButton (0) || Input.GetButtonDown("Fire"))
-			thrower.ThrowRock ();
+		if (Input.GetMouseButtonDown (0) || Input.GetButtonDown("Fire"))
+			if (acquirer.inventory.Contains("Rock"))
+				thrower.ThrowRock ();
 		
-		if (Input.GetMouseButton (1) || Input.GetButtonDown("Action"))
+		if (Input.GetMouseButtonDown (1) || Input.GetButtonDown("Action"))
 			acquirer.AcquireFixation ();
+		
+		if (Input.GetButtonDown("DropRock"))
+			thrower.DropRock ();
 
-		if (Input.GetButtonDown("Run"))
-			locomotor.Running = true;
+		locomotor.Running = Input.GetButtonDown("Run");
 		
 		// JOYSTICK / MOUSE -----------
 		if (Input.GetKeyDown(KeyCode.JoystickButton16))

@@ -16,12 +16,23 @@ public class RockThrower : MonoBehaviour
 	 * Our rock launcher.
 	 */
 	private Launcher launcher;
-
+	private Transform launcherTransform;
+	
+	/* The Rock Mesh (and Material for it) to display while carrying a rock */
+	public Mesh rockMesh;
+	public Material rockMaterial;
+	
 	/**
 	 * Drops rock.
 	 */
 	public void DropRock()
 	{
+		GameObject rock;
+
+		if (acquirer.inventory.Remove("Rock", out rock)) {
+			rock.SetActiveRecursively(true);
+			launcher.Launch(rock, 0);
+		}
 	}
 
 	/**
@@ -44,6 +55,7 @@ public class RockThrower : MonoBehaviour
 	{
 		acquirer = GetComponent<Acquirer>();
 		launcher = GetComponentInChildren<Launcher>();
+		launcherTransform = launcher.transform;
 	}
 
 	/**
@@ -53,11 +65,11 @@ public class RockThrower : MonoBehaviour
 	{
 		acquirable.inventoryObject.SetActiveRecursively(false);
 	}
-
-	/**
-	 * TODO Render rock in hand.
-	 */
+	
+	/* Renders the rock that the player is carrying - use of a MeshRenderer would be possible too */
 	private void Update()
 	{
+		if (rockMesh && acquirer.inventory.Contains("Rock"))
+			Graphics.DrawMesh(rockMesh, launcherTransform.position, launcherTransform.rotation, rockMaterial, 0);
 	}
 }

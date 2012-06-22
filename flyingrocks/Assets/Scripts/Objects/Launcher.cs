@@ -37,4 +37,12 @@ public class Launcher : MonoBehaviour
 		projectile.rigidbody.AddRelativeForce(Vector3.forward * force, forceMode);
 		projectile.rigidbody.AddRelativeTorque(torque, torqueForceMode);
 	}
+	
+	public void Launch(GameObject projectile, float force)
+	{
+		projectile.transform.position = transform.position;
+		projectile.transform.rotation = transform.rotation;
+		projectile.rigidbody.AddRelativeForce(Vector3.forward * force, forceMode);
+		projectile.rigidbody.AddRelativeTorque(torque, torqueForceMode);
+	}
 }

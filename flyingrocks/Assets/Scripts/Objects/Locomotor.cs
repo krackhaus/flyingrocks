@@ -98,11 +98,15 @@ public class Locomotor : MonoBehaviour
 	{
 		Quaternion lookAt = Quaternion.LookRotation(position - transform.position, Vector3.up);
 		
+		lookAt.x = 0;
+		
 		while ( Quaternion.Angle(transform.rotation, lookAt) > 1 )
 		{
 			lookAt = Quaternion.LookRotation(position - transform.position, Vector3.up);
 			transform.rotation = Quaternion.Lerp(transform.rotation, lookAt, 3 * Time.deltaTime);
-			//check for attactors in fov
+			
+			//TODO check for attactors in fov while sweeping
+			
 			yield return new WaitForSeconds(Time.deltaTime);
 		}
 	}

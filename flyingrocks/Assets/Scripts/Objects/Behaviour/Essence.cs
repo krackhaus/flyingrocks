@@ -44,6 +44,7 @@ public class Essence: MonoBehaviour
 		Hungry = true;
 		
 		locomotor = GetComponent<Locomotor>();
+		stats = GetComponent<Stats>();
 	}
 	
 	void Start()
