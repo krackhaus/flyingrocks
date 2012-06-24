@@ -35,7 +35,7 @@ public class PlayerInputController : MonoBehaviour
 		joystickNames = Input.GetJoystickNames() as string[];
 		if (!JoystickAttached) return;
 		foreach (string controllerName in joystickNames)
-			Debug.Log ("The " +controllerName+ " is attached.");
+			Debug.Log (controllerName+ " is attached.");
 	}
 
 	void Update ()
