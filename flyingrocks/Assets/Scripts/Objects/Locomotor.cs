@@ -9,6 +9,8 @@ public class Locomotor : MonoBehaviour
 	public float turnRate = 100f;
 	public float jumpForce = 10f;
 	public float runningModifier = 1.5f;
+	public float strafeReducer = 0.5f;
+	public float backpedelReducer = 0.25f;
 	
 	private bool hasHead = false;
 	private bool running = false;
@@ -20,7 +22,7 @@ public class Locomotor : MonoBehaviour
 		try
 		{
 			headTransform = transform.FindChild("Face").transform;
-			hasHead = true;
+			hasHead = headTransform != null;
 		}
 		catch{}
 	}
@@ -54,12 +56,12 @@ public class Locomotor : MonoBehaviour
 	
 	public void StrafeRight ()
 	{
-		transform.Translate (Vector3.right * (running ? velocity * runningModifier : velocity) * Time.deltaTime * 0.5f);
+		transform.Translate (Vector3.right * ((running ? velocity * runningModifier : velocity) - strafeReducer) * Time.deltaTime);
 	}
 
 	public void StrafeLeft ()
 	{
-		transform.Translate (Vector3.right * -(running ? velocity * runningModifier : velocity) * Time.deltaTime * 0.5f);
+		transform.Translate (Vector3.right * -((running ? velocity * runningModifier : velocity) - strafeReducer) * Time.deltaTime);
 	}
 
 	public void TurnRight ()
