@@ -73,6 +73,19 @@ public class Inventory<T>
 	}
 
 	/**
+	 * Returns the inventory for the given type.
+	 */
+	public int NumberOf(string type)
+	{
+		List<T> typeInventory;
+
+		if (inventory.TryGetValue(type, out typeInventory))
+			return typeInventory.Count;
+		else
+			return 0;
+	}
+
+	/**
 	 * Removes an item from the inventory.
 	 */
 	public bool Remove(string type, out T item)
