@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Acquirer))]
@@ -36,15 +38,26 @@ public class RockThrower : MonoBehaviour
 	}
 
 	/**
-	 * Removes a rock from the inventory and launches it.
+	 * Removes an item of a random type from the inventory and launches it.
 	 */
-	public void ThrowRock()
+	public void Throw()
 	{
-		GameObject rock;
+		List<string> types = acquirer.inventory.Types();
 
-		if (acquirer.inventory.Remove("Rock", out rock)) {
-			rock.SetActiveRecursively(true);
-			launcher.Launch(rock);
+		if (types.Count > 0)
+			Throw(types[(new System.Random()).Next(0, (types.Count - 1))]);
+	}
+
+	/**
+	 * Removes an item from the inventory and launches it.
+	 */
+	public void Throw(string type)
+	{
+		GameObject item;
+
+		if (acquirer.inventory.Remove(type, out item)) {
+			item.SetActiveRecursively(true);
+			launcher.Launch(item);
 		}
 	}
 

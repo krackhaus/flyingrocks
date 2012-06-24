@@ -70,8 +70,7 @@ public class PlayerInputController : MonoBehaviour
 		
 		// HYBRID ---------------------
 		if (Input.GetMouseButtonDown (0) || Input.GetButtonDown("Fire"))
-			if (acquirer.inventory.Contains("Rock"))
-				thrower.ThrowRock ();
+			thrower.Throw();
 		
 		if (Input.GetMouseButtonDown (1) || Input.GetButtonDown("Action"))
 			acquirer.AcquireFixation ();

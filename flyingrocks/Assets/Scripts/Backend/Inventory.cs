@@ -6,6 +6,11 @@ using System.Collections.Generic;
 public class Inventory<T>
 {
 	/**
+	 * Global count for all items.
+	 */
+	private int count;
+
+	/**
 	 * Inventory dictionary.
 	 */
 	private Dictionary<string, List<T>> inventory = new Dictionary<string, List<T>>();
@@ -19,11 +24,6 @@ public class Inventory<T>
 	 * Global item limit.
 	 */
 	private int limit;
-
-	/**
-	 * Global count for all items.
-	 */
-	private int count;
 
 	/**
 	 * Constructor.
@@ -93,5 +93,19 @@ public class Inventory<T>
 			item = default(T);
 			return false;
 		}
+	}
+
+	/**
+	 * Returns all types of objects that are currently in inventory.
+	 */
+	public List<string> Types()
+	{
+		List<string> types = new List<string>();
+
+		foreach (KeyValuePair<string, List<T>> item in inventory)
+			if (item.Value.Count > 0)
+				types.Add(item.Key);
+
+		return types;
 	}
 }
