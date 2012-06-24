@@ -33,7 +33,9 @@ public class Essence: MonoBehaviour
 	public float intellgence = 1;
 	public int memoryLength = 64;	//size of array, must be an int.
 	
-	private AudioSource ass;
+	private Animation animator;
+	public AnimationClip animationClip;
+	private AudioSource audioSource;
 	private Locomotor locomotor;
 	private Acquirer acquirer;
 	private Stats stats;
@@ -41,12 +43,17 @@ public class Essence: MonoBehaviour
 	#region Overhead
 	void Awake()
 	{
-		// Setup dependancies
-		ass = GetComponent<AudioSource>();
+		// Setup Dependancies
+		animator = GetComponent<Animation>();
+		audioSource = GetComponent<AudioSource>();
 		locomotor = GetComponent<Locomotor>();
 		acquirer = GetComponent<Acquirer>();
 		stats = GetComponent<Stats>();
 		
+		// Setup Components
+		animationClip.wrapMode = WrapMode.Loop;
+		animator.clip = animationClip;
+		animator.Play();
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
 		Hungry = true;
@@ -181,7 +188,7 @@ public class Essence: MonoBehaviour
 	void MakeDecision()
 	{
 		//Debug.Log (name +" making decision");
-		if (ass) ass.Play();
+		if (audioSource) audioSource.Play();
 		Active = false;
 		if (Hungry && FindClosestFood())
 			StartCoroutine(Forage());
