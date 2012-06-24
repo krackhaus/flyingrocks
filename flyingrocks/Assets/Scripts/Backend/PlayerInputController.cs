@@ -109,9 +109,9 @@ public class PlayerInputController : MonoBehaviour
 		if (JoystickAttached)
 		{
 			if (sticksActive)
-				GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' again to disable joystick.");
-			else
 				GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' button to enable joystick.");
+			else
+				GUI.Label(new Rect(10, Screen.height-20, 400, 20), "Press 'Home' again to disable joystick.");
 		}
 	}
 	

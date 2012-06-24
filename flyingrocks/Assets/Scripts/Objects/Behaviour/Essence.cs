@@ -33,6 +33,7 @@ public class Essence: MonoBehaviour
 	public float intellgence = 1;
 	public int memoryLength = 64;	//size of array, must be an int.
 	
+	private AudioSource ass;
 	private Locomotor locomotor;
 	private Acquirer acquirer;
 	private Stats stats;
@@ -41,6 +42,7 @@ public class Essence: MonoBehaviour
 	void Awake()
 	{
 		// Setup dependancies
+		ass = GetComponent<AudioSource>();
 		locomotor = GetComponent<Locomotor>();
 		acquirer = GetComponent<Acquirer>();
 		stats = GetComponent<Stats>();
@@ -179,6 +181,7 @@ public class Essence: MonoBehaviour
 	void MakeDecision()
 	{
 		//Debug.Log (name +" making decision");
+		if (ass) ass.Play();
 		Active = false;
 		if (Hungry && FindClosestFood())
 			StartCoroutine(Forage());
