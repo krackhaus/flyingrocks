@@ -16,12 +16,24 @@ public class Inventory<T>
 	private Dictionary<string, int> limits = new Dictionary<string, int>();
 
 	/**
+	 * Global item limit.
+	 */
+	private int limit;
+
+	/**
+	 * Global count for all items.
+	 */
+	private int count;
+
+	/**
 	 * Constructor.
 	 */
-	public Inventory(InventoryLimit[] inventoryLimits)
+	public Inventory(InventoryLimit[] inventoryLimitsByType, int inventoryLimit)
 	{
-		foreach (InventoryLimit item in inventoryLimits)
+		foreach (InventoryLimit item in inventoryLimitsByType)
 			limits.Add(item.acquirable, item.limit);
+
+		limit = inventoryLimit;
 	}
 
 	/**
@@ -30,15 +42,19 @@ public class Inventory<T>
 	 */
 	public bool Add(string type, T item)
 	{
-		int limit;
+		int typeLimit;
 		List<T> typeInventory;
 
 		if (!inventory.TryGetValue(type, out typeInventory))
 			typeInventory = new List<T>();
 
-		if (!limits.TryGetValue(type, out limit) || limit > typeInventory.Count) {
+		if ((!limits.TryGetValue(type, out typeLimit) || typeLimit > typeInventory.Count)
+				&& (limit == 0 || limit > count)) {
+
 			typeInventory.Add(item);
 			inventory[type] = typeInventory;
+
+			count++;
 
 			return true;
 		}
@@ -68,6 +84,8 @@ public class Inventory<T>
 
 			item = typeInventory[index];
 			inventory[type].RemoveAt(index);
+
+			count--;
 
 			return true;
 		}
