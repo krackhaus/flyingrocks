@@ -27,10 +27,7 @@ public class Acquirable : MonoBehaviour
 	/**
 	 * The acquirable type. Just goes off the tag value.
 	 */
-	public string type
-	{
-		get { return tag; }
-	}
+	public string type;
 
 	/**
 	 * Returns the acquirable's distance from the given acquirer.

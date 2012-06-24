@@ -19,8 +19,8 @@ public class RockThrower : MonoBehaviour
 	private Transform launcherTransform;
 	
 	/* The Rock Mesh (and Material for it) to display while carrying a rock */
-	public Mesh rockMesh;
 	public Material rockMaterial;
+	public Mesh rockMesh;
 	
 	/**
 	 * Drops rock.
@@ -68,6 +68,11 @@ public class RockThrower : MonoBehaviour
 	
 	/* Renders the rock that the player is carrying - use of a MeshRenderer would be possible too */
 	private void Update()
+	{
+		DrawRockInHand();
+	}
+	
+	private void DrawRockInHand()
 	{
 		if (rockMesh && acquirer.inventory.Contains("Rock"))
 			Graphics.DrawMesh(rockMesh, launcherTransform.position, launcherTransform.rotation, rockMaterial, 0);

@@ -19,7 +19,12 @@ public class Acquirer : MonoBehaviour
 	 * Limits on inventory items. Unity won't expose a Dictionary, so we'll use
 	 * an array of our own key-value pairs.
 	 */
-	public InventoryLimit[] inventoryLimits;
+	public InventoryLimit[] inventoryLimitsByType;
+
+	/**
+	 * Overall inventory limit for all items.
+	 */
+	public int inventoryLimit;
 
 	/**
 	 * Type of fixation to use.
@@ -114,7 +119,7 @@ public class Acquirer : MonoBehaviour
 	 */
 	private void Awake()
 	{
-		inventory = new Inventory<GameObject>(inventoryLimits);
+		inventory = new Inventory<GameObject>(inventoryLimitsByType, inventoryLimit);
 
 		fixate = Fixator.Delegate(fixationType, this);
 	}

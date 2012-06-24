@@ -1,7 +1,7 @@
 # Unity3D .gitignore file.
 
 # Folders
-flyingrocks/.DS_Store
+*.DS_Store
 flyingrocks/Library/
 flyingrocks/Library/AssetImportState
 flyingrocks/Library/AssetServerCacheV3

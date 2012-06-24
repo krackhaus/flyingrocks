@@ -23,28 +23,34 @@ public class Essence: MonoBehaviour
 	private float gridHeight = 30;
 	
 	List<ObjectOfInterest> objectsOfInterest = new List<ObjectOfInterest>();
-	bool[] states = new bool[5];
+	//bool[] states = new bool[5];
 	bool[] flags = new bool[6];
-	float hungerLevel = 50;
-	float healthLevel = 50;
-	Transform ooiTarget, roamTarget = null;
+	float hungerLevel = 50;			// refactor to store in stats
+	float healthLevel = 50;			// refactor to store in stats
+	Transform ooiTarget, roamTarget = null;	// replace with Acquirer
 #endif
 	
 	public float intellgence = 1;
 	public int memoryLength = 64;	//size of array, must be an int.
 	
+	private AudioSource ass;
 	private Locomotor locomotor;
+	private Acquirer acquirer;
 	private Stats stats;
 	
 	#region Overhead
 	void Awake()
 	{
+		// Setup dependancies
+		ass = GetComponent<AudioSource>();
+		locomotor = GetComponent<Locomotor>();
+		acquirer = GetComponent<Acquirer>();
+		stats = GetComponent<Stats>();
+		
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
 		Hungry = true;
 		
-		locomotor = GetComponent<Locomotor>();
-		stats = GetComponent<Stats>();
 	}
 	
 	void Start()
@@ -52,6 +58,7 @@ public class Essence: MonoBehaviour
 		//transform.parent = GameObject.Find("Generated Enemies").transform;
 		
 		// Generate a list of all Objects of Interest with which to attract Badger to.
+		//  -- remove after successful integration of Acquirer.
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag("ObjectOfInterest"))
 		{
 			Component c = go.GetComponent<ObjectOfInterest>();
@@ -121,7 +128,6 @@ public class Essence: MonoBehaviour
 	
 	IEnumerator MoveTowardTarget(bool foraging)
 	{
-		print (Target.tag);
 		yield return StartCoroutine(locomotor.TurnToFace(Target.position, 5)); // move turn speed to pub var deg/sec
 		while (Target && !ReachedTarget && hungerLevel < 150)
 		{
@@ -175,6 +181,7 @@ public class Essence: MonoBehaviour
 	void MakeDecision()
 	{
 		//Debug.Log (name +" making decision");
+		if (ass) ass.Play();
 		Active = false;
 		if (Hungry && FindClosestFood())
 			StartCoroutine(Forage());
@@ -260,10 +267,10 @@ public class Essence: MonoBehaviour
 	#region Getters and Setters
 	public bool Hungry
 	{
-		get { return flags[0]; }
-		set { flags[0] = value; }
+		get { return stats.memory.CurrentHunger > 25; } // 25 = magic hunger threshold value
+		set { stats.memory.CurrentHunger = value ? 50 : 0; }
 	}
-			
+	
 	public bool Foraging
 	{
 		get { return flags[1]; }

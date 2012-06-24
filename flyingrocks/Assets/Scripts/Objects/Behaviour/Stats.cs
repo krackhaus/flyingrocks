@@ -4,16 +4,22 @@ using System.Collections.Generic;
 
 public class Stats : MonoBehaviour
 {
-	private float attitude;
-	private float damage;
-	private float hunger;
+	public float damage, health, hunger, attitude, anger, intelligence, perception;
 	
-	class Memory
+	public Memory memory = new Memory();
+	
+	public class Memory
 	{
+		private List<float> hunger;
+		private List<float> anger;
+		private int memoryLength = 64;
 		
-		private List<float> hunger;// = new List<float>(memoryLength);
-		private List<float> anger;// = new List<float>(memoryLength);
-		private int memoryLength;
+		public Memory()
+		{
+			hunger = new List<float>(memoryLength);	
+			anger = new List<float>(memoryLength);
+		}
+		
 		
 		#region Getters and Setters
 		public int MemoryLength
@@ -24,7 +30,11 @@ public class Stats : MonoBehaviour
 		// HUNGER ------------
 		public float CurrentHunger
 		{
-			get { return hunger[0]; }
+			get { return hunger.IndexOf(0); }
+			set
+			{
+				hunger.Insert(0, value);
+			}
 		}
 		
 		public float AverageHunger
@@ -70,9 +80,4 @@ public class Stats : MonoBehaviour
 		}
 		#endregion
 	}
-	private Memory memory = new Memory();
-	
-	
-	
-	
 }
