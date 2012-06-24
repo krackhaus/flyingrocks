@@ -136,6 +136,14 @@ public class Acquirer : MonoBehaviour
 	}
 
 	/**
+	 * Disables items upon acquisition.
+	 */
+	private void OnAcquisitionOf(Acquirable acquirable)
+	{
+		acquirable.inventoryObject.SetActiveRecursively(false);
+	}
+
+	/**
 	 * Notifies fixation objects.
 	 */
 	private void UpdateFixations()

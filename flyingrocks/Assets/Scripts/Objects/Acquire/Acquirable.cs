@@ -25,17 +25,6 @@ public class Acquirable : MonoBehaviour
 	}
 
 	/**
-	 * Materials to apply to the mesh when rendering the acquirable in a
-	 * transient state.
-	 */
-	public Material[] transientMaterials;
-
-	/**
-	 * Mesh to use when rendering the acquirable in a transient state.
-	 */
-	public Mesh transientMesh;
-
-	/**
 	 * The acquirable type.
 	 */
 	public string type;

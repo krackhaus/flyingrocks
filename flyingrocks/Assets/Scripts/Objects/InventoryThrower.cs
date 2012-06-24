@@ -15,16 +15,6 @@ public class InventoryThrower : MonoBehaviour
 	private Acquirer acquirer;
 
 	/**
-	 * Mesh renderer used to render the readied item.
-	 */
-	private MeshFilter itemMeshFilter;
-
-	/**
-	 * Mesh renderer used to render the readied item.
-	 */
-	private MeshRenderer itemRenderer;
-
-	/**
 	 * Our rock launcher.
 	 */
 	private Launcher launcher;
@@ -33,6 +23,11 @@ public class InventoryThrower : MonoBehaviour
 	 * The current readied item.
 	 */
 	private GameObject readiedItem;
+
+	/**
+	 * Transient game object to use when representing the readied item.
+	 */
+	private Transient transientItem;
 
 	/**
 	 * Drops the readied item.
@@ -78,6 +73,9 @@ public class InventoryThrower : MonoBehaviour
 	public bool Throw(float force = 0)
 	{
 		if (readiedItem) {
+			if (transientItem)
+				transientItem.Restore();
+
 			readiedItem.SetActiveRecursively(true);
 			launcher.Launch(readiedItem);
 			ResetReadiedItem();
@@ -95,43 +93,39 @@ public class InventoryThrower : MonoBehaviour
 	{
 		acquirer = GetComponent<Acquirer>();
 		launcher = GetComponentInChildren<Launcher>();
-		itemRenderer = launcher.GetComponent<MeshRenderer>();
-		itemMeshFilter = launcher.GetComponent<MeshFilter>();
-
-		itemRenderer.enabled = false;
 	}
 
 	/**
 	 * Readies the given item. Sets it up to be launched upon the next call to
 	 * Throw() and to render upon updates.
+	 *
+	 * Finds the first Transient object in the hierarchy and use it to represent
+	 * the readied item.
 	 */
 	private void ReadyItem(GameObject item)
 	{
 		readiedItem = item;
 
 		// Note that we can't use GetComponentInChildren() here because the
-		// children objects are inactive.
-		Acquirable acquirable = item.transform.Find("Acquirable").GetComponent<Acquirable>();
+		// children components are inactive.
+		foreach (Transform child in item.transform) {
+			if (transientItem = child.GetComponent<Transient>()) {
+				transientItem.Activate();
+				transientItem.gameObject.SetActiveRecursively(true);
 
-		// If the item has a transient mesh set, use it to represent the readied
-		// item.
-		if (acquirable && acquirable.transientMesh) {
-			itemMeshFilter.mesh = acquirable.transientMesh;
-			itemRenderer.materials = acquirable.transientMaterials;
-			itemRenderer.enabled = true;
+				break;
+			}
 		}
 	}
 
 	/**
-	 * Disables items upon acquisition. If an item isn't currently readied, then
-	 * the next item of the acquired-item type is readied.
+	 * If an item isn't currently readied, then the next item of the
+	 * acquired-item type is readied.
 	 */
 	private void OnAcquisitionOf(Acquirable acquirable)
 	{
-		acquirable.inventoryObject.SetActiveRecursively(false);
-
-		// The item isn't readied directly because we want it to be pulled from
-		// inventory.
+		// The item isn't readied directly using ReadyItem() because we want it to
+		// be pulled from inventory.
 		if (!readiedItem)
 			ReadyNext(acquirable.type);
 	}
@@ -141,15 +135,16 @@ public class InventoryThrower : MonoBehaviour
 	 */
 	private void ResetReadiedItem()
 	{
-		itemRenderer.enabled = false;
-
-		if (itemMeshFilter.mesh) {
-			itemMeshFilter.mesh = default(Mesh);
-
-			if (itemRenderer.materials != null)
-				Array.Clear(itemRenderer.materials, 0, itemRenderer.materials.Length);
-		}
-
 		readiedItem = default(GameObject);
+		transientItem = default(Transient);
+	}
+
+	/**
+	 * Renders the transient item relative to the launcher.
+	 */
+	private void LateUpdate()
+	{
+		if (transientItem)
+			launcher.Position(transientItem.gameObject);
 	}
 }
