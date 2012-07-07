@@ -55,7 +55,7 @@ public class Essence: MonoBehaviour
 		animator.clip = animationClip;
 		animator.Play();
 		rigidbody.freezeRotation = true;
-		rigidbody.useGravity = false;
+		//rigidbody.useGravity = false;
 		Hungry = true;
 		
 	}

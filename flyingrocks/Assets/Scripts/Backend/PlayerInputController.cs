@@ -6,7 +6,7 @@ public class PlayerInputController : MonoBehaviour
 {
 	private Locomotor locomotor;
 	private Acquirer acquirer;
-	private RockThrower thrower;
+	private InventoryThrower thrower;
 	
 	private string[] joystickNames;
 	private Vector2 mouse, position, rotation;
@@ -22,7 +22,7 @@ public class PlayerInputController : MonoBehaviour
 		SetupJoysticks();
 		locomotor = GetComponent<Locomotor> ();
 		acquirer = GetComponent<Acquirer> ();
-		thrower = GetComponent<RockThrower> ();
+		thrower = GetComponent<InventoryThrower> ();
 		Screen.showCursor = false;
 	}
 	
@@ -69,15 +69,16 @@ public class PlayerInputController : MonoBehaviour
 			locomotor.Jump();
 		
 		// HYBRID ---------------------
-		if (Input.GetMouseButtonDown (0) || Input.GetButtonDown("Fire"))
-			if (acquirer.inventory.Contains("Rock"))
-				thrower.ThrowRock ();
+		if (Input.GetMouseButtonDown (0) || Input.GetButtonDown("Fire")) {
+			thrower.Throw();
+			thrower.ReadyNext();
+		}
 		
 		if (Input.GetMouseButtonDown (1) || Input.GetButtonDown("Action"))
 			acquirer.AcquireFixation ();
 		
 		if (Input.GetButtonDown("DropRock"))
-			thrower.DropRock ();
+			thrower.Drop();
 
 		locomotor.Running = Input.GetButtonDown("Run");
 		

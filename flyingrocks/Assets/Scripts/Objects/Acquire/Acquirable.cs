@@ -25,7 +25,7 @@ public class Acquirable : MonoBehaviour
 	}
 
 	/**
-	 * The acquirable type. Just goes off the tag value.
+	 * The acquirable type.
 	 */
 	public string type;
 
@@ -40,7 +40,7 @@ public class Acquirable : MonoBehaviour
 	/**
 	 * Tempts the acquirer while he's within the collider.
 	 */
-	void OnTriggerStay(Collider other)
+	private void OnTriggerStay(Collider other)
 	{
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 
@@ -51,7 +51,7 @@ public class Acquirable : MonoBehaviour
 	/**
 	 * Tells the acquirer to forget the acquirable when he leaves the collider.
 	 */
-	void OnTriggerExit(Collider other)
+	private void OnTriggerExit(Collider other)
 	{
 		Acquirer acquirer = other.gameObject.GetComponent<Acquirer>();
 

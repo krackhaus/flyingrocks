@@ -28,21 +28,31 @@ public class Launcher : MonoBehaviour
 	public ForceMode torqueForceMode = ForceMode.VelocityChange;
 
 	/**
-	 * Orients and launches the given game object.
+	 * Positions and launches the given game object using the configured amount
+	 * of force.
 	 */
 	public void Launch(GameObject projectile)
 	{
-		projectile.transform.position = transform.position;
-		projectile.transform.rotation = transform.rotation;
+		Launch(projectile, force);
+	}
+	
+	/**
+	 * Positions and launches the given game object using the given amount of
+	 * force.
+	 */
+	public void Launch(GameObject projectile, float force)
+	{
+		Position(projectile);
 		projectile.rigidbody.AddRelativeForce(Vector3.forward * force, forceMode);
 		projectile.rigidbody.AddRelativeTorque(torque, torqueForceMode);
 	}
-	
-	public void Launch(GameObject projectile, float force)
+
+	/**
+	 * Position the given game object to where the launcher is.
+	 */
+	public void Position(GameObject projectile)
 	{
 		projectile.transform.position = transform.position;
 		projectile.transform.rotation = transform.rotation;
-		projectile.rigidbody.AddRelativeForce(Vector3.forward * force, forceMode);
-		projectile.rigidbody.AddRelativeTorque(torque, torqueForceMode);
 	}
 }
