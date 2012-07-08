@@ -23,13 +23,27 @@ public class RoomGenerator : MonoBehaviour
 		int prefabToUse = 0; //todo--choose which prefab of those available to use
 		
 		int roomIndex = 0;
+		bool newRow = false;
 		int sizeY = (int)sizeOfLabyrinth.y;
 		int sizeX = (int)sizeOfLabyrinth.x;
+		float startPostionX = transform.position.x;
+		Vector2 position = new Vector2(0,0);
 		labyrinthRooms = new GameObject[sizeX * sizeY];
 		
+		print (sizeX);
+		
 		for (int y = 0; y < sizeY; y++)
+		{
 			for (int x = 0; x < sizeX; x++)
-				labyrinthRooms[roomIndex] = Room.Initialize(this.transform, prefabs[prefabToUse], roomIndex++);
+			{
+				float oldY = position.y;
+				labyrinthRooms[roomIndex] = Room.Initialize(this.transform, prefabs[prefabToUse], ref position, roomIndex++, newRow);
+				if (x == sizeX-2)
+					newRow = true;
+			}
+			position.x = startPostionX;
+			newRow = false;
+		}
 		
 		BrainDump();
 	}

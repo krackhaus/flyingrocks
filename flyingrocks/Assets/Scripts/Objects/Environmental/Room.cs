@@ -15,31 +15,41 @@ public class Room
 	/// <param name='idx'>
 	/// The room index number as assigned by the Generator.
 	/// </param>
-	public static GameObject Initialize(Transform parent, Object prefab, int idx)
+	public static GameObject Initialize(Transform parent, Object prefab, ref Vector2 position, int idx, bool advanceRow)
 	{
 		Object temp = Object.Instantiate(prefab);
-		GameObject roomInstance = GameObject.Find(prefab.name);
-		PlaceRoomTransform(parent, ref roomInstance);
-		roomInstance.transform.parent = parent;
+		Debug.Log (temp.name);
+		GameObject roomInstance = GameObject.Find(prefab.name + "(Clone)");
+		PlaceRoomTransform(parent, ref roomInstance, position);
+		position.x += roomInstance.collider.bounds.extents.x * 2;
+		if (advanceRow)
+		{
+			position.x = 0;
+			position.y -= roomInstance.collider.bounds.extents.z * 2;
+		}
 		roomInstance.name = string.Format("Room{0}", idx);
+		roomInstance.GetComponent<RoomFollowCamera>().enabled = false;
 		PopulateRoom();
-		Object.Destroy(temp);
+		
 		return roomInstance;
 	}
 	
 	/// <summary>
 	/// Places the room transform.
 	/// </summary>
-	static void PlaceRoomTransform(Transform parent, ref GameObject instance)
+	static void PlaceRoomTransform(Transform parent, ref GameObject instance, Vector2 position)
 	{
 		RaycastHit hit;
 		float heightOffset = 10;
-		float preferredHeight = instance.transform.position.y;
-		Vector3 mePos = parent.position;
-		Vector3 castPos = mePos + new Vector3(0, heightOffset, 0);
+		Vector3 castPos = parent.position + new Vector3(0, heightOffset, 0);
 		
 		if (Physics.Raycast(castPos, Vector3.down, out hit))
-			instance.transform.position = new Vector3(mePos.x, hit.point.y + preferredHeight, mePos.z);
+		{
+			instance.transform.position = new Vector3(position.x, hit.point.y - 15, position.y);
+			instance.transform.parent = parent;
+		}
+		else
+			Object.Destroy(instance);
 	}
 	
 	/// <summary>
