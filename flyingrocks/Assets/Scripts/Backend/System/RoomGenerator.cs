@@ -6,6 +6,7 @@ public class RoomGenerator : MonoBehaviour
 	public Object[] prefabs;
 	public Vector2 sizeOfLabyrinth;
 	public bool generateOnAwake = true;
+	public bool randomizeLightColor;
 	
 	private GameObject[] labyrinthRooms;
 	
@@ -37,9 +38,12 @@ public class RoomGenerator : MonoBehaviour
 			for (int x = 0; x < sizeX; x++)
 			{
 				float oldY = position.y;
-				labyrinthRooms[roomIndex] = Room.Initialize(this.transform, prefabs[prefabToUse], ref position, roomIndex++, newRow);
+				labyrinthRooms[roomIndex] = Room.Initialize(this.transform, prefabs[prefabToUse], ref position, roomIndex, newRow);
+				if (randomizeLightColor)
+					labyrinthRooms[roomIndex].GetComponentInChildren<Light>().color = Room.GetRandomColor();
 				if (x == sizeX-2)
 					newRow = true;
+				roomIndex++;
 			}
 			position.x = startPostionX;
 			newRow = false;
