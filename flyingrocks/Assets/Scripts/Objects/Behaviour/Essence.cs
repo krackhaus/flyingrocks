@@ -51,9 +51,12 @@ public class Essence: MonoBehaviour
 		stats = GetComponent<Stats>();
 		
 		// Setup Components
-		animationClip.wrapMode = WrapMode.Loop;
-		animator.clip = animationClip;
-		animator.Play();
+		if (animationClip != null)
+		{
+			animationClip.wrapMode = WrapMode.Loop;
+			animator.clip = animationClip;
+			animator.Play();
+		}
 		rigidbody.freezeRotation = true;
 		//rigidbody.useGravity = false;
 		Hungry = true;

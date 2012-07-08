@@ -13,9 +13,17 @@ public class PlayerInputController : MonoBehaviour
 	private float damper = 0.1f;
 	private bool sticksActive = false;
 	
+	public GameObject cursor;
+	public bool useCursor = true;
 	public bool stickAndMouse = false;
 	public bool invertLookYAxis = false;
 	public float ySensitivity = 0.5f;
+	public float cursorRotationDamping = 10.0f;
+	
+	void Awake()
+	{
+		cursor = GameObject.Find("Cursor");
+	}
 
 	void Start ()
 	{
@@ -91,7 +99,15 @@ public class PlayerInputController : MonoBehaviour
 			position.y = Input.GetAxis("LeftStickVertical") * damper;
 			rotation.x = Input.GetAxis("RightStickHorizontal");
 			rotation.y = Input.GetAxis("RightStickVertical") * ySensitivity;
-			locomotor.FreeLook(rotation.x, (invertLookYAxis?-rotation.y:rotation.y));
+			if (useCursor && cursor)
+			{
+				cursor.transform.Translate(new Vector3(rotation.x, 0, -rotation.y), transform);
+				//temp code
+				Quaternion desiredRotation = Quaternion.LookRotation(cursor.transform.position - transform.position);
+				transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * cursorRotationDamping);
+			}
+			else
+				locomotor.FreeLook(rotation.x, (invertLookYAxis?-rotation.y:rotation.y));
 			locomotor.GoForward(position.y);
 			locomotor.Strafe(position.x);
 			if (position.magnitude == 0)
