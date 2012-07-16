@@ -4,49 +4,52 @@ using System.Collections;
 public class Flock : MonoBehaviour {
 	
 	GameObject goalPosition;
+	GameObject[] flock;
 	
+	public float birdSpeed = 2;
 	public float rotationSpeed = 5;
-	public float neighborDistance = 2;
+	public float flockInclusionDistance = 5;
+	public float collisionAvoidanceDistance = 1;
 	
 	float speed = .001f;
 	Vector3 averageHeading, averagePosition;
+	Vector3 wind = new Vector3(1, 0, 1);
 	
 	void Start()
 	{
+		flock = GameObject.FindGameObjectsWithTag("Crow");
 		goalPosition = GameObject.Find("GoalPosition");
 		speed = Random.Range(.1f,1);
 	}
 	
 	void Update()
 	{
-		if (Random.Range(0,5) < 1)
+		if (Random.Range(0, 5) < 1)
 			ApplyRules();
-		transform.Translate(0,0,Time.deltaTime * speed);
+		transform.Translate(0, 0, Time.deltaTime * speed * birdSpeed);
 	}
 	
 	void ApplyRules()
 	{
-		GameObject[] gos = GameObject.FindGameObjectsWithTag("Crow");
 		Vector3 goalPos = goalPosition.transform.position;
-		Vector3 vcenter = new Vector3();
-		Vector3 vavoid = new Vector3();
+		Vector3 vcenter = Vector3.zero;
+		Vector3 vavoid = Vector3.zero;
 		float gSpeed = 0;
-		Vector3 wind = new Vector3(1,0,1);
 		
 		float dist;
 		int groupSize = 0;
 		
-		foreach (GameObject go in gos)
+		foreach (GameObject go in flock)
 		{
 			if (go != this.gameObject)
 			{
 				dist = Vector3.Distance(go.transform.position, this.transform.position);
 				
-				if (dist <= neighborDistance)
+				if (dist <= flockInclusionDistance)
 				{
 					vcenter += go.transform.position;
 					groupSize++;
-					if (dist < .5f)
+					if (dist < collisionAvoidanceDistance)
 						vavoid = vavoid + (this.transform.position - go.transform.position);
 					gSpeed = gSpeed + go.GetComponent<Flock>().speed;
 				}
