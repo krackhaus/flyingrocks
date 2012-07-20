@@ -7,13 +7,19 @@ public class RoomGenerator : MonoBehaviour
 	public Vector2 sizeOfLabyrinth;
 	public bool generateOnAwake = true;
 	public bool randomizeLightColor;
+	public bool useRoomCameras = true;
 	
 	private GameObject[] labyrinthRooms;
 	
 	void Awake()
 	{
 		if (generateOnAwake)
+		{
+			if (useRoomCameras)
+				Camera.mainCamera.GetComponent<FollowCamera>().enabled = false;
+			
 			GenerateLabrynth();
+		}
 	}
 	
 	/// <summary>
